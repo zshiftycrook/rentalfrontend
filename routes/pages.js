@@ -27,18 +27,18 @@ router.get('/add-payment',(req,res)=>{
     res.render('add-payment');
 })
 router.get('/payment_list',(req,res)=>{
-    axios.get('http://localhost:1337/Payments')
+    axios.get('http://tarman.nonstopplc.com:5001/Payments')
     .then(function(results){
      console.log(results.data)
     res.render('payment_list',{payment: results.data})
     })
 })
 router.get('/rental_list',(req,res)=>{
-    axios.get('http://localhost:1337/Rentals')
+    axios.get('http://tarman.nonstopplc.com:5001/Rentals')
     .then(function(results){
-        axios.get('http://localhost:1337/Customers')
+        axios.get('http://tarman.nonstopplc.com:5001/Customers')
         .then(function(customers){
-            axios.get('http://localhost:1337/Rooms')
+            axios.get('http://tarman.nonstopplc.com:5001/Rooms')
             .then(function(rooms){
                 res.render('rental_list',{rentals: results.data})
                 while(results.data[0] != undefined){
@@ -61,7 +61,7 @@ router.get('/404',(req,res)=>{
     res.render('404')
 })
 router.get('/room_list',(req,res)=>{
-    axios.get('http://localhost:1337/Rooms')
+    axios.get('http://tarman.nonstopplc.com:5001/Rooms')
     .then(function(results){
      console.log(results.data[0])
     res.render('room_list',{room: results.data})
@@ -72,7 +72,7 @@ router.get('/table',(req,res)=>{
     res.render('table')
 })
 router.get('/tenant_list',(req,res)=>{
-    axios.get('http://localhost:1337/Customers')
+    axios.get('http://tarman.nonstopplc.com:5001/Customers')
     .then(function(results){
      console.log(results.data[0])
     res.render('tenant_list',{tenant: results.data})

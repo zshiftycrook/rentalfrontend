@@ -24,7 +24,7 @@ exports.login = async (req,res)=>{
         }
         else
         {
-            axios.post('http://localhost:1337/auth/local',
+            axios.post('http://tarman.nonstopplc.com:5001/auth/local',
             {
                 identifier: email,
                 password: password
@@ -52,7 +52,7 @@ exports.register =(req,res)=>{
     const {first_name,last_name,user_name,Authorization,PhoneNumber,email, password,password_repeat,SubCity,Country}=req.body;
        // Validation of confirmed password 
        if(password == password_repeat){
-         axios.post('http://localhost:1337/Users',
+         axios.post('http://tarman.nonstopplc.com:5001/Users',
             {
                 username: user_name,
                 email: email,
@@ -86,7 +86,7 @@ exports.registerCustomer =(req,res)=>{
     console.log(username)
     if(checkbox == 'on'){
         if(password == repeatepassword){
-            axios.post('http://localhost:1337/Customers',
+            axios.post('http://tarman.nonstopplc.com:5001/Customers',
             {
                 name: username,
                 email: email,
@@ -125,11 +125,11 @@ exports.registerRoom =(req,res)=>{
     
     const {roomnumber,floor,size,status}=req.body;
     
-    axios.get('http://localhost:1337/Floor-Numbers?_where[floor]='+floor)
+    axios.get('http://tarman.nonstopplc.com:5001/Floor-Numbers?_where[floor]='+floor)
     .then(function(results)
     {
         floorid=results.data[0].id;
-        axios.post('http://localhost:1337/Rooms',
+        axios.post('http://tarman.nonstopplc.com:5001/Rooms',
         {
             roomnumber: roomnumber,
             status: status,
@@ -164,15 +164,15 @@ exports.registerRental =(req,res)=>{
     
     const {cname,uid,sdate,edate,price,roomnumber}=req.body;
    console.log(req.body)
-    axios.get('http://localhost:1337/Rooms?_where[roomnumber]='+roomnumber)
+    axios.get('http://tarman.nonstopplc.com:5001/Rooms?_where[roomnumber]='+roomnumber)
     .then(function(resu)
     {
             console.log(resu.data[0].id)
-            axios.get('http://localhost:1337/Customers?_where[name]='+cname)
+            axios.get('http://tarman.nonstopplc.com:5001/Customers?_where[name]='+cname)
             .then(function(results)
             {
                 console.log(results)
-                axios.post('http://localhost:1337/Rentals',
+                axios.post('http://tarman.nonstopplc.com:5001/Rentals',
             {
                 customer: {
                     id: results.data[0].id
@@ -213,10 +213,10 @@ exports.registerPayment =(req,res)=>{
     const {roomnumber,name,leasetime,month}=req.body;
     console.log(req.body);
     
-        axios.get('http://localhost:1337/Rentals?_where[room.roomnumber]='+roomnumber+'&_where[customer.name]='+name)
+        axios.get('http://tarman.nonstopplc.com:5001/Rentals?_where[room.roomnumber]='+roomnumber+'&_where[customer.name]='+name)
         .then(function(results){
          console.log(results.data[0])
-            axios.post('http://localhost:1337/Payments',
+            axios.post('http://tarman.nonstopplc.com:5001/Payments',
         {
             rental:{
                 id: results.data[0].id,
