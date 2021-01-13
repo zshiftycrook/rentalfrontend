@@ -125,7 +125,7 @@ exports.registerRoom =(req,res)=>{
     
     const {roomnumber,floor,size,status}=req.body;
     
-    axios.get('http://localhost:1337/Floor-Numbers?_where[floor]='+floor,{params:{}})
+    axios.get('http://localhost:1337/Floor-Numbers?_where[floor]='+floor)
     .then(function(results)
     {
         floorid=results.data[0].id;

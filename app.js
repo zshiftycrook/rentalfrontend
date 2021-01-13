@@ -28,12 +28,7 @@ app.use(cookieParser());
 
 app.set('view engine', 'hbs');
 
-db.connect((error) => {
-    if (error){
-        console.log(error)
-    }
-    else{console.log("Mysql connected")}
-})
+
 
 //routes
 app.use('/',require('./routes/pages'));
