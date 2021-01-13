@@ -1,0 +1,116 @@
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:before {
+bottom: .5em;
+}
+.Searchbox 
+{
+	position: flex;
+	height: 1%;
+	width: 50%;
+	align-self: center;
+	margin-right: 0%;
+	margin-left: 20%;
+	align-items: right;
+
+}
+#dtOrder_wrapper {
+	position: absolute;
+	height: 100%;
+	width: 80%;
+	margin-right: 0%;
+	margin-left:1%;
+}
+.dataTables_scroll
+{
+	position: relative;
+	margin-right: 0%;
+}
+
+/*OLD*/
+nav {
+    background-color: rgb(42, 50, 165);
+    color: aliceblue;
+    padding: 30px 60px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 100;
+}
+
+
+nav ul {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+nav li {
+    list-style: none;
+}
+nva li a{
+    color: aliceblue;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 8px;
+}
+nav li a:hover{
+    color: yellow;
+    text-decoration: none;
+}
+/* The sidebar menu */
+.sidenav {
+  height: 100%; /* Full-height: remove this if you want "auto" height */
+  width: 130x; /* Set the width of the sidebar */
+  position: absolute; /* Fixed Sidebar (stay in place on scroll) */
+  position:absoulute;	
+  z-index: 1; /* Stay on top */
+  top: 9; /* Stay at the top */
+  left: 500;
+  background-color: rgb(47, 54, 143); /* Black */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+  z-index: 50;
+}
+
+/* The navigation menu links */
+.sidenav a {
+  padding: 90px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #dfd3d3;
+  display: block;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+/* Style page content */
+.main {
+  margin-left: 160px; /* Same as the width of the sidebar */
+  padding: 0px 10px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+@media screen and (max-device-width: 450px) {
+  .harry {
+    display: none;
+  }
+}
+.empreg{
+  margin-right: 10%;
+  color: red;
+  align-self: right;
+}
