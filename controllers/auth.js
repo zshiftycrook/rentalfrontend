@@ -8,12 +8,13 @@ const router =express.Router();
 const { search } = require('../routes/auth');
 const axios = require('axios');
 
-const db = mysql.createConnection({
-    host: process.env.DATABSE_HOST,
-    user: process.env.DATABASE_USER,
-    Password: process.env.DATABSE_Password,
-    database: process.env.DATABASE
-})
+function tokenPayload(value){
+    return config = {
+        headers:{
+            Authorization: `Bearer ${value.cookies.jwt}` 
+        }
+    }
+}
 
 // Login
 exports.login = async (req,res)=>{
@@ -33,7 +34,8 @@ exports.login = async (req,res)=>{
                 console.log(response.data);
                 let val
                 return res  .cookie('jwt',response.data.jwt)
-                            .cookie('aut',response.data.Authorization)
+                            .cookie('aut',response.data.user.Authorization)
+                            .cookie('id',response.data.user.id)
                             .status(200)
                             .render('index',{data: response.data})
             })
@@ -51,8 +53,9 @@ exports.login = async (req,res)=>{
 exports.register =(req,res)=>{  
     const {first_name,last_name,user_name,Authorization,PhoneNumber,email, password,password_repeat,SubCity,Country}=req.body;
        // Validation of confirmed password 
+       
        if(password == password_repeat){
-         axios.post('http://strapi.nonstopplc.com:1440/Users',
+         axios.post('http://strapi.nonstopplc.com:1440/Users', 
             {
                 username: user_name,
                 email: email,
@@ -64,7 +67,8 @@ exports.register =(req,res)=>{
                 city: SubCity,
                 country: Country,
 
-            })
+            },
+            tokenPayload(req) )
             .then(function (response){
                 console.log(response);
                 return res.status(200).render('index')
@@ -98,7 +102,8 @@ exports.registerCustomer =(req,res)=>{
                 buisness: buisness,
                 note: note,
 
-            })
+            },
+            tokenPayload(req) )
             .then(function (response){
                 console.log(response);
                 return res.status(200).render('tenant_list')
@@ -125,7 +130,8 @@ exports.registerRoom =(req,res)=>{
     
     const {roomnumber,floor,size,status}=req.body;
     
-    axios.get('http://strapi.nonstopplc.com:1440/Floor-Numbers?_where[floor]='+floor)
+    axios.get('http://strapi.nonstopplc.com:1440/Floor-Numbers?_where[floor]='+floor,
+    tokenPayload(req) )
     .then(function(results)
     {
         floorid=results.data[0].id;
@@ -137,7 +143,8 @@ exports.registerRoom =(req,res)=>{
                 id: floorid
             },
             size: size
-        })
+        },
+        tokenPayload(req) )
         .then(function (response){
             console.log(response);
             return res.status(200).render('room_list')
@@ -164,11 +171,13 @@ exports.registerRental =(req,res)=>{
     
     const {cname,uid,sdate,edate,price,roomnumber}=req.body;
    console.log(req.body)
-    axios.get('http://strapi.nonstopplc.com:1440/Rooms?_where[roomnumber]='+roomnumber)
+    axios.get('http://strapi.nonstopplc.com:1440/Rooms?_where[roomnumber]='+roomnumber,
+    tokenPayload(req) )
     .then(function(resu)
     {
             console.log(resu.data[0].id)
-            axios.get('http://strapi.nonstopplc.com:1440/Customers?_where[name]='+cname)
+            axios.get('http://strapi.nonstopplc.com:1440/Customers?_where[name]='+cname,
+            tokenPayload(req) )
             .then(function(results)
             {
                 console.log(results)
@@ -186,7 +195,8 @@ exports.registerRental =(req,res)=>{
                     id: resu.data[0].id,
                  }
 
-            })
+            },
+            tokenPayload(req) )
             .then(function (response){
                 console.log(response);
                 return res.status(200).render('rental_list')
@@ -213,7 +223,8 @@ exports.registerPayment =(req,res)=>{
     const {roomnumber,name,leasetime,month}=req.body;
     console.log(req.body);
     
-        axios.get('http://strapi.nonstopplc.com:1440/Rentals?_where[room.roomnumber]='+roomnumber+'&_where[customer.name]='+name)
+        axios.get('http://strapi.nonstopplc.com:1440/Rentals?_where[room.roomnumber]='+roomnumber,
+        tokenPayload(req) )
         .then(function(results){
          console.log(results.data[0])
             axios.post('http://strapi.nonstopplc.com:1440/Payments',
@@ -222,7 +233,8 @@ exports.registerPayment =(req,res)=>{
                 id: results.data[0].id,
             },
             price: results.data[0].price1*month,
-            })
+            },
+            tokenPayload(req) )
             .then(function (response){
                 console.log(response);
                 return res.status(200).get('/payment_list')
