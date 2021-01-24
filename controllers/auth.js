@@ -62,10 +62,10 @@ exports.register =(req,res)=>{
                 firstname: first_name,
                 password: password,
                 lastname: last_name,
-                //Autorization: Authorization,
-                //phonenumber: PhoneNumber,
-                //city: SubCity,
-                //country: Country,
+                Autorization: Authorization,
+                phonenumber: PhoneNumber,
+                city: SubCity,
+                country: Country,
 
             },
             tokenPayload(req) )
