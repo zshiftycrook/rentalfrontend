@@ -2,11 +2,16 @@ const mysql =require('mysql');
 const jwt=require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { authUser } = require('./basicAuth');
-const { Router } = require('express');
+const { Router, response } = require('express');
 const express=require('express');
 const router =express.Router();
 const { search } = require('../routes/auth');
 const axios = require('axios');
+const pages =require('../routes/pages')
+const { data } = require('jquery');
+
+
+
 
 function tokenPayload(value){
     return config = {
@@ -41,7 +46,7 @@ exports.login = async (req,res)=>{
             })
             .catch(function (error){
                 console.log(error);
-                return res.status(400).render('login',)
+                return res.status(400).render('login',{message: error.response.data.message})
             })
         }
     }catch (error) {
@@ -75,19 +80,19 @@ exports.register =(req,res)=>{
             })
             .catch(function (error){
                 console.log(error);
-                return res.status(400).render('register')
+                return res.status(400).render('register',{message: error.response.data.message})
             })
         }
         else
         {
-            return res.status(400).render('register')
+            return res.status(400).render('register',{message: "Password Doesnt Match"})
         }
 }
 //Register Customer
 exports.registerCustomer =(req,res)=>{
     
     const {username,tin,buisness,contactperson,phonenumber,kebeleid,email,note,password,repeatepassword,status,checkbox}=req.body;
-    console.log(username)
+    console.log(req.body)
     if(checkbox == 'on'){
         if(password == repeatepassword){
             axios.post('http://strapi.nonstopplc.com:1440/Customers',
@@ -101,26 +106,27 @@ exports.registerCustomer =(req,res)=>{
                 Status: status,
                 buisness: buisness,
                 note: note,
+                password: password
 
             },
             tokenPayload(req) )
             .then(function (response){
-                console.log(response);
-                return res.status(200).render('tenant_list')
+                console.log(response.data);
+                return res.status(200).render('tenant_list',{tenant: response.data})
             })
             .catch(function (error){
-                console.log(error);
-                return res.status(400).render('add-tenant')
+                console.log(error.response.data.message);
+                return res.status(400).render('add-tenant',{message: error.response.data.message})
             })
         }
         else
         {
-            return res.status(400).render('add-tenant')
+            return res.status(400).render('add-tenant',{message: "Password is not the same"})
         }
     }
     else
        {
-           return res.status(400).render('add-tenant')
+           return res.status(400).render('add-tenant',{message: "Agree to terms and services"})
        }
 }
 
@@ -128,8 +134,8 @@ exports.registerCustomer =(req,res)=>{
 //Register Room
 exports.registerRoom =(req,res)=>{
     
-    const {roomnumber,floor,size,status}=req.body;
-    
+    const {roomnumber,floor,size,Status}=req.body;
+    console.log(req.body)
     axios.get('http://strapi.nonstopplc.com:1440/Floor-Numbers?_where[floor]='+floor,
     tokenPayload(req) )
     .then(function(results)
@@ -138,7 +144,7 @@ exports.registerRoom =(req,res)=>{
         axios.post('http://strapi.nonstopplc.com:1440/Rooms',
         {
             roomnumber: roomnumber,
-            status: status,
+            status: Status,
             floor_number: {
                 id: floorid
             },
@@ -146,17 +152,18 @@ exports.registerRoom =(req,res)=>{
         },
         tokenPayload(req) )
         .then(function (response){
-            console.log(response);
-            return res.status(200).render('room_list')
+            console.log(response.data[0]);
+            return res.redirect('http://tarman.nonstopplc.com:5001/room_list')
+          //  return res.status(200).render('room_list',{room: response.data})
         })
         .catch(function (error){
             console.log(error);
-            return res.status(400).render('add-room')
+            return res.status(400).render('add-room',{message: error.response.data.message})
         })
     })
     .catch(function(error){
         console.log(error);
-        return res.status(400).render('add-room')
+        return res.status(400).render('add-room',{message: error.response.data.message})
     });
     
     
@@ -175,7 +182,7 @@ exports.registerRental =(req,res)=>{
     tokenPayload(req) )
     .then(function(resu)
     {
-            console.log(resu.data[0].id)
+            
             axios.get('http://strapi.nonstopplc.com:1440/Customers?_where[name]='+cname,
             tokenPayload(req) )
             .then(function(results)
@@ -199,54 +206,54 @@ exports.registerRental =(req,res)=>{
             tokenPayload(req) )
             .then(function (response){
                 console.log(response);
-                return res.status(200).render('rental_list')
+                return res.redirect('http://tarman.nonstopplc.com:5001/rental_list')
             })
             .catch(function (error){
                 console.log(error);
-                return res.status(400).render('add-rental')
+                return res.status(400).render('add-rental',{message: error.response.data.message})
             })
             })
             .catch(function (error){
                 console.log(error);
-                return results.status(400).render('add-rental')
+                return results.status(400).render('add-rental',{message: error.response.data.message})
             })
             
     })
     .catch(function(error){
         console.log(error);
-        return results.status(400).render('add-rental')
+        return results.status(400).render('add-rental',{message: error.response.data.message})
     })   
 }
 //Register Payment
 exports.registerPayment =(req,res)=>{
     
-    const {roomnumber,name,leasetime,month}=req.body;
+    const {roomnumber,month}=req.body;
     console.log(req.body);
     
         axios.get('http://strapi.nonstopplc.com:1440/Rentals?_where[room.roomnumber]='+roomnumber,
         tokenPayload(req) )
         .then(function(results){
-         console.log(results.data[0])
             axios.post('http://strapi.nonstopplc.com:1440/Payments',
         {
             rental:{
                 id: results.data[0].id,
             },
-            price: results.data[0].price1*month,
+            price: results.data[0].price*month*1.15,
             },
             tokenPayload(req) )
             .then(function (response){
-                console.log(response);
-                return res.status(200).get('/payment_list')
+                console.log("response");
+                return res.redirect('http://tarman.nonstopplc.com:5001/payment_list' )
             })
             .catch(function (error){
                 console.log(error);
-                return res.status(400).render('add-payment')
+                return res.status(400).render('add-payment',{message: error.response.data.message})
             })
+            
         })
         .catch(function(error){
             console.log(error);
-            return results.status(400).render('add-payment')
+            return results.status(400).render('add-payment',{message: error.response.data.message})
         })
 
 }

@@ -3,7 +3,7 @@ const express=require('express');
 const { authUser }= require('../controllers/basicAuth')
 const router =express.Router();
 const axios = require('axios');
-
+const asyncHandler =require('express-async-handler')
 function tokenPayload(value){
     return config = {
         headers:{
@@ -11,7 +11,38 @@ function tokenPayload(value){
         }
     }
 }
+function Payment(req){
+    return     axios.get('http://strapi.nonstopplc.com:1440/Payments', tokenPayload(req))
 
+}
+
+function Rental(req){
+    return axios.get('http://strapi.nonstopplc.com:1440/Rentals',
+    tokenPayload(req))
+}
+function listPayment(rental,payment){
+    var i
+    var j
+    var display ={}
+    var name = 'data'
+   display[name] = [];
+    for (i=0;payment.data[i] != undefined; i++){
+        for (j=0;rental.data[j] != undefined; j++){
+            if(payment.data[i].rental.id==rental.data[j].id)
+            {
+                    var data ={
+                        cname : rental.data[j].customer.name,
+                        roomnumber : rental.data[j].room.roomnumber,
+                        paid : payment.data[i].price
+                    };
+                    
+                    display[name].push(data)
+            }
+        }
+    }
+    return display[name];
+ //   console.log(data)
+}
 
 router.get('/',(req,res)=>{
     res.render('login');
@@ -34,32 +65,24 @@ router.get('/add-tenant',(req,res)=>{
 router.get('/add-payment',(req,res)=>{
     res.render('add-payment');
 })
-router.get('/payment_list',(req,res)=>{
-    axios.get('http://strapi.nonstopplc.com:1440/Payments',
-    tokenPayload(req) )
-    .then(function(results){
-     console.log(results.data)
-    res.render('payment_list',{payment: results.data})
-    })
-})
+
+router.get('/payment_list',asyncHandler(async (req,res)=>{
+rental = await Rental(req)
+payment = await Payment(req)
+list = listPayment(rental, payment)
+console.log(listPayment(rental,payment))
+
+res.render('payment_list',{test : list})
+}))
+
+
+
 router.get('/rental_list',(req,res)=>{
     axios.get('http://strapi.nonstopplc.com:1440/Rentals',
     tokenPayload(req) )
     .then(function(results){
-        axios.get('http://strapi.nonstopplc.com:1440/Customers',
-        tokenPayload(req) )
-        .then(function(customers){
-            axios.get('http://strapi.nonstopplc.com:1440/Rooms',
-            tokenPayload(req) )
-            .then(function(rooms){
-                res.render('rental_list',{rentals: results.data})
-                while(results.data[0] != undefined){
-                    results.data[0]     
-                }
-            })
-        })
-
-    
+       console.log(results.data)
+       res.render('rental_list',{rental: results.data})
     })
     
 })

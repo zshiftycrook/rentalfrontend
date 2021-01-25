@@ -16,7 +16,7 @@
     <div id="wrapper">
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0">
-                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="/index">
                     <div class="sidebar-brand-icon rotate-n-15"></div>
                     <div class="sidebar-brand-text mx-3"><span><i class="fas fa-building" style="font-size: 35px;"></i>&nbsp; TAR Systems</span></div>
                 </a>
@@ -26,9 +26,8 @@
                     <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i><span>Profile</span></a></li>
                     
                     <li class="nav-item"></li>
-                    <li class="nav-item"><a class="nav-link" href="/add-tenant">Add Tenant</a><a class="nav-link" href="/add-payment">Add Payment</a><a class="nav-link" href="/add-room">Add Room</a><a class="nav-link" href="/room_list">View Room list</a>
-                        <a
-                            class="nav-link" href="/tenant_list">View Tenant List</a><a class="nav-link" href="/payment_list">View Payment List</a></li>
+ <li class="nav-item"><a class="nav-link" href="/add-rental">Add Rental</a><a class="nav-link" href="/add-tenant">Add Tenant</a><a class="nav-link" href="/add-payment">Add Payment</a><a class="nav-link" href="/add-room">Add Room</a><a class="nav-link" href="/room_list">View Room list</a>                        <a
+                            class="nav-link" href="/tenant_list">View Tenant List</a><a class="nav-link" href="/payment_list">View Payment List</a><a class="nav-link" href="/rental_list">View Rental List</a></li>
                     <li class="nav-item"></li>
                     <li class="nav-item"><a class="nav-link" href="/"><i class="far fa-user-circle"></i><span>Login</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-circle"></i><span>Register</span></a></li>
@@ -149,31 +148,35 @@
                     <div class="col-md-8 col-xl-12 offset-md-2 offset-xl-0">
                         <form class="custom-form" method="POST" action="/auth/registerPayment">
                             <h1>Make Payment</h1>
+                            {{#if message}}
+                            <p class="tesxt-dar mb-1">{{message}}</p>
+                 {{/if}}
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Number</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="text" name="roomnumber"></div>
+                                <div class="col-sm-6 input-column"><input id="room" class="form-control" type="text" name="roomnumber"></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Tenant Name</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="text" name="name"></div>
+                                <div class="col-sm-6 input-column"><input id="tenant" class="form-control" type="text" name="name" disabled></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Remaining lease Time&nbsp;</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="text" name="leasetime"></div>
+                                <div class="col-sm-6 input-column"><input id="lease"class="form-control" type="text" name="leasetime" disabled></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Paid for (number of month)</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="number" name="month" onkeyup="gettotalprice"></div>
+                                <div class="col-sm-6 input-column"><input id="month" class="form-control" type="number" name="month" onchange="gettotalprice()" ></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Total Paid Amount +VAT</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="number"></div>
+                                <div class="col-sm-6 input-column"><input class="form-control" id="total" type="number" disabled></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="dropdown-input-field">Zone</label></div>
-                                <div class="col-sm-4 input-column"><input class="form-control" type="text"></div>
+                                <div class="col-sm-4 input-column"><input class="form-control" type="text" disabled></div>
                             </div>
-                            <p>NB :&nbsp; -&nbsp; This should indicate and give additional information about the tenant information&nbsp;</p><button class="btn btn-light submit-button" type="Submit">Submit Payment&nbsp;</button></form>
+                            <button class="btn btn-light submit-button" type="submit">Submit Payment&nbsp;</button></form>
+
                     </div>
                 </div>
             </div>
@@ -188,6 +191,7 @@
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="/assets/js/chart.min.js"></script>
     <script src="/assets/js/bs-init.js"></script>
+   
     <script src="/assets/js/calculate.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
     <script src="/assets/js/theme.js"></script>

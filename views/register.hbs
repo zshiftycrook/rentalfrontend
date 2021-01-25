@@ -26,7 +26,9 @@
                                 <h4 class="text-dark mb-4">Create Employee an Account!</h4>
                             </div>
                             <form class="user" method="POST" action="/auth/register">
-                                
+                                {{#if message}}
+                            <p class="tesxt-dar mb-1">{{message}}</p>
+                 {{/if}}
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="FirstName" placeholder="First Name" name="first_name"></div>
                                     <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="LastName" placeholder="Last Name" name="last_name"></div>

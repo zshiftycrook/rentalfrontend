@@ -16,7 +16,7 @@
     <div id="wrapper">
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0">
-                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="/index">
                     <div class="sidebar-brand-icon rotate-n-15"></div>
                     <div class="sidebar-brand-text mx-3"><span><i class="fas fa-building" style="font-size: 35px;"></i>&nbsp; TAR Systems</span></div>
                 </a>
@@ -26,9 +26,9 @@
                     <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i><span>Profile</span></a></li>
                     
                     <li class="nav-item"></li>
-                    <li class="nav-item"><a class="nav-link" href="/add-tenant">Add Tenant</a><a class="nav-link" href="/add-payment">Add Payment</a><a class="nav-link" href="/add-room">Add Room</a><a class="nav-link" href="/room_list">View Room list</a>
+                    <li class="nav-item"><a class="nav-link" href="/add-rental">Add Rental</a><a class="nav-link" href="/add-tenant">Add Tenant</a><a class="nav-link" href="/add-payment">Add Payment</a><a class="nav-link" href="/add-room">Add Room</a><a class="nav-link" href="/room_list">View Room list</a>
                         <a
-                            class="nav-link" href="/tenant_list">View Tenant List</a><a class="nav-link" href="/payment_list">View Payment List</a></li>
+                            class="nav-link" href="/tenant_list">View Tenant List</a><a class="nav-link" href="/payment_list">View Payment List</a><a class="nav-link" href="/rental_list">View Rental List</a></li>
                     <li class="nav-item"></li>
                     <li class="nav-item"><a class="nav-link" href="/"><i class="far fa-user-circle"></i><span>Login</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-circle"></i><span>Register</span></a></li>
@@ -142,7 +142,10 @@
             </div>
             </nav>
             <div class="container-fluid">
-                <h3 class="text-dark mb-4">Employee Profile</h3>
+                <h3 class="text-dark mb-4">Profile</h3>
+                {{#if message}}
+                            <p class="tesxt-dar mb-1">{{message}}</p>
+                 {{/if}}
                 <div class="row mb-3">
                     <div class="col-lg-4">
                         <div class="card mb-3">
@@ -243,14 +246,14 @@
                                     </div>
                                     <div class="card-body">
                                         <form>
-                                            <div class="form-group"><label for="address"><strong>Sub-City</strong><br></label><input class="form-control" type="text" {{#if profile}}placeholder="{{profile.username}}"{{/if}} name="address" disabled></div>
-                                            <div class="form-group"><label for="address"><strong>Phone Number</strong></label><input class="form-control" type="text" placeholder="Start with    +251" name="address" disabled></div>
+                                            <div class="form-group"><label for="address"><strong>Sub-City</strong><br></label><input class="form-control" type="text" {{#if profile}}placeholder="{{profile.city}}"{{/if}} name="address" disabled></div>
+                                            <div class="form-group"><label for="address"><strong>Phone Number</strong></label><input class="form-control" type="text" {{#if profile}}placeholder="{{profile.phonenumber}}"{{/if}} name="address" disabled></div>
                                             <div class="form-row">
                                                 <div class="col">
-                                                    <div class="form-group"><label for="city"><strong>City</strong></label><input class="form-control" type="text" placeholder="Eg. Addis Ababa" name="city" disabled></div>
+                                                    <div class="form-group"><label for="city"><strong>City</strong></label><input class="form-control" type="text" {{#if profile}}placeholder="{{profile.city}}"{{/if}} name="city" disabled></div>
                                                 </div>
                                                 <div class="col">
-                                                    <div class="form-group"><label for="country"><strong>Country</strong></label><input class="form-control" type="text" placeholder="Eg. Ethiopia" name="country" disabled></div>
+                                                    <div class="form-group"><label for="country"><strong>Country</strong></label><input class="form-control" type="text" {{#if profile}}placeholder="{{profile.country}}"{{/if}} name="country" disabled></div>
                                                 </div>
                                             </div>
                                             <div class="form-group"><button class="btn btn-primary btn-sm" type="submit" hidden>Save&nbsp;Settings</button></div>
@@ -263,7 +266,7 @@
                 </div>
                 <div class="card shadow mb-5">
                     <div class="card-header py-3">
-                        <p class="text-primary m-0 font-weight-bold">Forum Settings</p>
+                        <p class="text-primary m-0 font-weight-bold">Contact Settings</p>
                     </div>
                     <div class="card-body">
                         <div class="row">
