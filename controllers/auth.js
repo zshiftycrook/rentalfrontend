@@ -10,9 +10,45 @@ const axios = require('axios');
 const pages =require('../routes/pages')
 const { data } = require('jquery');
 
+async function marketer(value,res){
+    
+    console.log("error")
+    console.log(value.cookies.aut)
+    if ( await value.cookies.aut == "Manager"){
+        console.log("Marketer")
+        return true
+    }
+    else 
+    {   
+        return res.status(500).render('login',{message:"authentication error please use a Management account to access these future "})
+    }
+}
+async function marketer(value,res){
+    
+    
+  
+        if ( await value.cookies.aut == "Marketer" || await value.cookies.aut == "Manager"){
+            console.log("Marketer")
+            return true
+        }
+        else 
+        {
+            
+            return res.status(500).render('login',{message:"authentication error please use a Marketing account to access these future "})
+        }
 
+ 
+}
+async function finance(value,res){
 
-
+    if (value.cookies.aut == "Finance" || value.cookies.aut == "Manager"){
+        return true
+    }
+    else 
+    {
+        return res.status(500).render('/login',{message:"authentication error please use an Finance account to access these future"})
+    }
+}
 function tokenPayload(value){
     return config = {
         headers:{
@@ -20,9 +56,45 @@ function tokenPayload(value){
         }
     }
 }
+function isManager(req){
+    if (req == "Manager")
+    {
+        return true
+    }
+    else {
+        return false;
+    }
+}
+function isMarketer(req){
+    if(req == "Marketer"||req == "Manager")
+    {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+function isFinanace(req){
+    if(req == "Finance"||req == "Manager")
+    {
+        return true;
+    }
+    else 
+    {
+        return false;
+    }
+}
 
+
+// upload pic 
+exports.upload = async(req,res)=>{
+}
+// Change Password
+exports.changepassword = async(req,res)=>{
+}
 // Login
 exports.login = async (req,res)=>{
+
     try{
         const {email,password}=req.body;
         if(!email || !password){
@@ -36,16 +108,20 @@ exports.login = async (req,res)=>{
                 password: password
             })
             .then(function (response){
-                console.log(response.data);
+                
                 let val
+                var htmlFinanace =  isFinanace(response.data.user.Autorization);
+                var htmlManager =  isManager(response.data.user.Autorization);
+                var htmlMarketer = isMarketer(response.data.user.Autorization);
                 return res  .cookie('jwt',response.data.jwt)
-                            .cookie('aut',response.data.user.Authorization)
+                            .cookie('aut',response.data.user.Autorization)
                             .cookie('id',response.data.user.id)
                             .status(200)
-                            .render('index',{data: response.data})
+                            .render('index',{data: response.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager})
             })
             .catch(function (error){
                 console.log(error);
+                
                 return res.status(400).render('login',{message: error.response.data.message})
             })
         }
@@ -54,8 +130,8 @@ exports.login = async (req,res)=>{
     }
 }
 //Register Empoloyee
-
-exports.register =(req,res)=>{  
+exports.register = async (req,res)=>{  
+    if ( await marketer(req,res) ){
     const {first_name,last_name,user_name,Authorization,PhoneNumber,email, password,password_repeat,SubCity,Country}=req.body;
        // Validation of confirmed password 
        
@@ -75,11 +151,10 @@ exports.register =(req,res)=>{
             },
             tokenPayload(req) )
             .then(function (response){
-                console.log(response);
                 return res.status(200).render('index')
             })
             .catch(function (error){
-                console.log(error);
+                console.log(error.response.data.message)
                 return res.status(400).render('register',{message: error.response.data.message})
             })
         }
@@ -87,10 +162,12 @@ exports.register =(req,res)=>{
         {
             return res.status(400).render('register',{message: "Password Doesnt Match"})
         }
+    }
+    
 }
 //Register Customer
-exports.registerCustomer =(req,res)=>{
-    
+exports.registerCustomer = async(req,res)=>{
+    if ( await marketer(req,res) ){
     const {username,tin,buisness,contactperson,phonenumber,kebeleid,email,note,password,repeatepassword,status,checkbox}=req.body;
     console.log(req.body)
     if(checkbox == 'on'){
@@ -128,105 +205,108 @@ exports.registerCustomer =(req,res)=>{
        {
            return res.status(400).render('add-tenant',{message: "Agree to terms and services"})
        }
+    }
 }
-
-
 //Register Room
-exports.registerRoom =(req,res)=>{
-    
-    const {roomnumber,floor,size,Status}=req.body;
-    console.log(req.body)
-    axios.get('http://strapi.nonstopplc.com:1440/Floor-Numbers?_where[floor]='+floor,
-    tokenPayload(req) )
-    .then(function(results)
-    {
-        floorid=results.data[0].id;
-        axios.post('http://strapi.nonstopplc.com:1440/Rooms',
-        {
-            roomnumber: roomnumber,
-            status: Status,
-            floor_number: {
-                id: floorid
-            },
-            size: size
-        },
+exports.registerRoom = async(req,res)=>{
+    if ( await marketer(req,res) ){
+        const {roomnumber,floor,size,Status}=req.body;
+        console.log(req.body)
+        axios.get('http://strapi.nonstopplc.com:1440/Floor-Numbers?_where[floor]='+floor,
         tokenPayload(req) )
-        .then(function (response){
-            console.log(response.data[0]);
-            return res.redirect('http://tarman.nonstopplc.com:5001/room_list')
-          //  return res.status(200).render('room_list',{room: response.data})
+        .then(function(results)
+        {
+            floorid=results.data[0].id;
+            axios.post('http://strapi.nonstopplc.com:1440/Rooms',
+            {
+                roomnumber: roomnumber,
+                status: Status,
+                floor_number: {
+                    id: floorid
+                },
+                size: size
+            },
+            tokenPayload(req) )
+            .then(function (response){
+                console.log(response.data[0]);
+                return res.redirect('http://tarman.nonstopplc.com:5001/room_list')
+            //  return res.status(200).render('room_list',{room: response.data})
+            })
+            .catch(function (error){
+                console.log(error);
+                return res.status(400).render('add-room',{message: error.response.data.message})
+            })
         })
-        .catch(function (error){
+        .catch(function(error){
             console.log(error);
             return res.status(400).render('add-room',{message: error.response.data.message})
-        })
-    })
-    .catch(function(error){
-        console.log(error);
-        return res.status(400).render('add-room',{message: error.response.data.message})
-    });
-    
+        });
+    }
     
         
-   
+
    // return res.render("add-room")
  
 
 }
 //Register Rental
-exports.registerRental =(req,res)=>{
-    
-    const {cname,uid,sdate,edate,price,roomnumber}=req.body;
-   console.log(req.body)
-    axios.get('http://strapi.nonstopplc.com:1440/Rooms?_where[roomnumber]='+roomnumber,
-    tokenPayload(req) )
-    .then(function(resu)
-    {
-            
-            axios.get('http://strapi.nonstopplc.com:1440/Customers?_where[name]='+cname,
-            tokenPayload(req) )
-            .then(function(results)
-            {
-                console.log(results)
-                axios.post('http://strapi.nonstopplc.com:1440/Rentals',
-            {
-                customer: {
-                    id: results.data[0].id
-                },
-                users_permissions_user: {
-                    id: resu.data[0].id},
-                starting: sdate,
-                ends: edate ,
-                price: price,
-                room: {
-                    id: resu.data[0].id,
-                 }
+exports.registerRental = async(req,res)=>{
+    if ( await marketer(req,res) ){
+        const {cname,uid,sdate,edate,price,roomnumber}=req.body;
+        console.log(req.body)
+        axios.get('http://strapi.nonstopplc.com:1440/Rooms?_where[roomnumber]='+roomnumber,
+        tokenPayload(req) )
+        .then(function(resu)
+        {
+                axios.get('http://strapi.nonstopplc.com:1440/Customers?_where[name]='+cname,
+                tokenPayload(req) )
+                .then( function (results) {
+                        try {
+                             axios.post('http://strapi.nonstopplc.com:1440/Rentals',
+                                {
+                                    customer: {
+                                        id: results.data[0].id
+                                    },
+                                    users_permissions_user: {
+                                        id: req.cookies.id
+                                    },
+                                    starting: sdate,
+                                    ends: edate,
+                                    price: price,
+                                    room: {
+                                        id: resu.data[0].id,
+                                    }
+                                },
+                                tokenPayload(req))
+                                .then(function (response) {
+                                    console.log(response);
+                                    return res.redirect('http://tarman.nonstopplc.com:5001/rental_list');
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                    return res.status(400).render('add-rental', { message: error.response.data.message });
+                                });
+                        }
+                        catch (error) {
+                            res.status(400).render('add-rental', { message: "The Tenant Was not found pls check again" });
+                        }
 
-            },
-            tokenPayload(req) )
-            .then(function (response){
-                console.log(response);
-                return res.redirect('http://tarman.nonstopplc.com:5001/rental_list')
-            })
-            .catch(function (error){
-                console.log(error);
-                return res.status(400).render('add-rental',{message: error.response.data.message})
-            })
-            })
-            .catch(function (error){
-                console.log(error);
-                return results.status(400).render('add-rental',{message: error.response.data.message})
-            })
-            
-    })
-    .catch(function(error){
-        console.log(error);
-        return results.status(400).render('add-rental',{message: error.response.data.message})
-    })   
+                    })
+                .catch(function (error){
+                    console.log(error);
+                    return results.status(400).render('add-rental',{message: error.response.data.message})
+                })
+                
+        })
+        .catch(function(error){
+            console.log(error);
+            return results.status(400).render('add-rental',{message: error.response.data.message})
+        })   
+    }
 }
 //Register Payment
-exports.registerPayment =(req,res)=>{
-    
+exports.registerPayment = async(req,res)=>{
+    if ( await finance(req,res) ){
     const {roomnumber,month}=req.body;
     console.log(req.body);
     
@@ -247,15 +327,15 @@ exports.registerPayment =(req,res)=>{
             })
             .catch(function (error){
                 console.log(error);
-                return res.status(400).render('add-payment',{message: error.response.data.message})
+                return res.status(400).end()
             })
             
         })
         .catch(function(error){
             console.log(error);
-            return results.status(400).render('add-payment',{message: error.response.data.message})
+            return results.status(400).end()
         })
-
+    }
 }
 //List
 //List Employee

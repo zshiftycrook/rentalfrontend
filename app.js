@@ -8,12 +8,7 @@ dotenv.config({path:'./.env'});
 
 
 const app = express();
-const db = mysql.createConnection({
-    host: process.env.DATABSE_HOST,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABSE_PASSWORD,
-    database: process.env.DATABASE
-})
+
 
 const publicDirectory = path.join(__dirname,'./public');
 

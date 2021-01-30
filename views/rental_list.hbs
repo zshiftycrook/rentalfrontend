@@ -21,17 +21,21 @@
                     <div class="sidebar-brand-text mx-3"><span><i class="fas fa-building" style="font-size: 35px;"></i>&nbsp; TAR Systems</span></div>
                 </a>
                 <hr class="sidebar-divider my-0">
-                <ul class="nav navbar-nav text-light" id="accordionSidebar">
+                   <ul class="nav navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item"><a class="nav-link active" href="/index"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i><span>Profile</span></a></li>
-                    
-                    <li class="nav-item"></li>
-                    <li class="nav-item"><a class="nav-link" href="/add-rental">Add Rental</a><a class="nav-link" href="/add-tenant">Add Tenant</a><a class="nav-link" href="/add-payment">Add Payment</a><a class="nav-link" href="/add-room">Add Room</a><a class="nav-link" href="/room_list">View Room list</a>
+                    <li class="nav-item"></li>  
+                                    
+
+                    <li class="nav-item">{{#if marketer}}<a class="nav-link" href="/add-rental">Add Rental</a><a class="nav-link" href="/add-tenant">Add Tenant</a><a class="nav-link" href="/add-room">Add Room</a>{{/if}}{{#if finance}}<a class="nav-link" href="/add-payment">Add Payment</a>{{/if}}<a class="nav-link" href="/room_list">View Room list</a>
                         <a
                             class="nav-link" href="/tenant_list">View Tenant List</a><a class="nav-link" href="/payment_list">View Payment List</a><a class="nav-link" href="/rental_list">View Rental List</a></li>
                     <li class="nav-item"></li>
+                    {{#if manager}}
                     <li class="nav-item"><a class="nav-link" href="/"><i class="far fa-user-circle"></i><span>Login</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-circle"></i><span>Register</span></a></li>
+                    {{/if}}
+                    
                 </ul>
                 <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
             </div>
@@ -39,6 +43,7 @@
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
                 <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <a class="nav-link" href="/logout"><i class="fas fa-user-circle"></i><span>Logout</span></a>
                     <div hidden class="container-fluid"><button class="btn btn-link d-md-none rounded-circle mr-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button>
                         <form class="form-inline d-none d-sm-inline-block mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                             <div class="input-group"><input class="bg-light form-control border-0 small" type="text" placeholder="Search for ...">
@@ -146,9 +151,18 @@
                 <div class="card shadow">
                     <div class="card-header py-3">
                         <p class="text-primary m-0 font-weight-bold">Rental Info</p>
-                        {{#if message}}
-                            <p class="tesxt-dar mb-1">{{message}}</p>
-                 {{/if}}
+                                {{#if message}}
+                    <div class="alert">
+                    <span class="closebtn">&times;</span>  
+                    <strong>Alert!</strong> {{message}}
+                    </div>
+                    {{/if}}
+                    {{#if success}}
+                    <div class="alert success">
+                    <span class="closebtn">&times;</span>  
+                    <strong>Success!</strong> {{success}}
+                    </div>       
+                    {{/if}}
                     </div>
                     <div class="card-body">
                         <div class="row">

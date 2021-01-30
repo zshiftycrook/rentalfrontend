@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/untitled.css">
 </head>
 
-<body id="page-top">
+<body id="page-top" onload="populateRental()">
     <div id="wrapper">
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0">
@@ -21,17 +21,21 @@
                     <div class="sidebar-brand-text mx-3"><span><i class="fas fa-building" style="font-size: 35px;"></i>&nbsp; TAR Systems</span></div>
                 </a>
                 <hr class="sidebar-divider my-0">
-                <ul class="nav navbar-nav text-light" id="accordionSidebar">
+                   <ul class="nav navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item"><a class="nav-link active" href="/index"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i><span>Profile</span></a></li>
-                    
-                    <li class="nav-item"></li>
-                    <li class="nav-item"><a class="nav-link" href="/add-rental">Add Rental</a><a class="nav-link" href="/add-tenant">Add Tenant</a><a class="nav-link" href="/add-payment">Add Payment</a><a class="nav-link" href="/add-room">Add Room</a><a class="nav-link" href="/room_list">View Room list</a>
+                    <li class="nav-item"></li>  
+                                    
+
+                    <li class="nav-item">{{#if marketer}}<a class="nav-link" href="/add-rental">Add Rental</a><a class="nav-link" href="/add-tenant">Add Tenant</a><a class="nav-link" href="/add-room">Add Room</a>{{/if}}{{#if finance}}<a class="nav-link" href="/add-payment">Add Payment</a>{{/if}}<a class="nav-link" href="/room_list">View Room list</a>
                         <a
                             class="nav-link" href="/tenant_list">View Tenant List</a><a class="nav-link" href="/payment_list">View Payment List</a><a class="nav-link" href="/rental_list">View Rental List</a></li>
                     <li class="nav-item"></li>
+                    {{#if manager}}
                     <li class="nav-item"><a class="nav-link" href="/"><i class="far fa-user-circle"></i><span>Login</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-circle"></i><span>Register</span></a></li>
+                    {{/if}}
+                    
                 </ul>
                 <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
             </div>
@@ -39,6 +43,7 @@
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
                 <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <a class="nav-link" href="/logout"><i class="fas fa-user-circle"></i><span>Logout</span></a>
                     <div hidden class="container-fluid"><button class="btn btn-link d-md-none rounded-circle mr-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button>
                         <form class="form-inline d-none d-sm-inline-block mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                             <div class="input-group"><input class="bg-light form-control border-0 small" type="text" placeholder="Search for ...">
@@ -144,7 +149,16 @@
             <div class="container-fluid">
                 <h3 class="text-dark mb-1">Add Rental</h3>
                 {{#if message}}
-                            <p class="tesxt-dar mb-1">{{message}}</p>
+                <div class="alert">
+                <span class="closebtn">&times;</span>  
+                <strong>Alert!</strong> {{message}}
+                </div>
+                {{/if}}
+                {{#if success}}
+                <div class="alert success">
+                <span class="closebtn">&times;</span>  
+                <strong>Success!</strong> {{success}}
+                </div>       
                  {{/if}}
             </div>
             <div class="container">
@@ -154,7 +168,12 @@
                             <h1>Rental</h1>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Customer</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="text" name="cname"></div>
+                                <div class="col-sm-6 input-column">
+                                <input id="cname" list="customer" name="cname" type="text" class="form-control" id="customer" >
+                                <datalist id="customer">
+                                    
+                                </datalist>
+                                </div>
                             </div>
                           
                             <div class="form-row form-group">
@@ -167,7 +186,12 @@
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">RoomNumber</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="text" name="roomnumber"></div>
+                                  <div class="col-sm-6 input-column">
+                                <input id="rnumber" list="roomnumber" name="roomnumber" type="text" class="form-control" >
+                                <datalist id="roomnumber">
+                                    
+                                </datalist>
+                                </div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Total Amount Per Month </label></div>
@@ -189,6 +213,7 @@
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="/assets/js/chart.min.js"></script>
+    <script src="/assets/js/calculate.js"></script>
     <script src="/assets/js/bs-init.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
     <script src="/assets/js/theme.js"></script>
