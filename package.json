@@ -25,7 +25,6 @@
     "form-data": "^3.0.0",
     "foundation": "^4.2.1-1",
     "fs": "0.0.1-security",
-    "handlebars-helpers": "^0.10.0",
     "hbs": "^4.1.1",
     "intl-tel-input": "^17.0.8",
     "jquery": "^3.5.1",

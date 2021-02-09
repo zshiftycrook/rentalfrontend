@@ -10,7 +10,7 @@ const axios = require('axios');
 const pages =require('../routes/pages')
 const { data, parseHTML } = require('jquery');
 const fs = require('fs');
-var helpers = require('handlebars-helpers')();
+
 const rp = require('request-promise')
 var FormData = require('form-data');
 

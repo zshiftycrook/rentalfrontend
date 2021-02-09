@@ -3,7 +3,7 @@ const express=require('express');
 const { authUser }= require('../controllers/basicAuth')
 const router =express.Router();
 const axios = require('axios');
-var helpers = require('handlebars-helpers')();
+
 const asyncHandler =require('express-async-handler')
 
 function manager(req,res,next){
