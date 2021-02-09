@@ -39,23 +39,23 @@
                                 </div>       
                                 {{/if}}
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="FirstName" placeholder="First Name" name="first_name"></div>
-                                    <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="LastName" placeholder="Last Name" name="last_name"></div>
-                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="UserName" placeholder="User Name" name="user_name"></div>
+                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="FirstName" placeholder="First Name" required name="first_name"></div>
+                                    <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="LastName" placeholder="Last Name" required name="last_name"></div>
+                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="UserName" required placeholder="User Name" name="user_name"></div>
 
                                 </div>
-                                <div class="form-group"><input class="form-control form-control-user" type="email" id="Email" aria-describedby="emailHelp" placeholder="Email Address" name="email"></div>
-                                <div class="form-group"><input class="form-control form-control-user" type="text" id="PhoneNumber" aria-describedby="emailHelp" placeholder="+251" name="PhoneNumber"></div>
+                                <div class="form-group"><input class="form-control form-control-user" type="email" required id="Email" aria-describedby="emailHelp" placeholder="Email Address" name="email"></div>
+                                <div class="form-group"><input class="form-control form-control-user" type="text" required id="PhoneNumber" pattern="(\+\s*2\s*5\s*1\s*9\s*(([0-9]\s*){8}\s*))|(0\s*9\s*(([0-9]\s*){8}))" title="+251000000 or 0911000000" aria-describedby="emailHelp" placeholder="+251" name="PhoneNumber"></div>
                                 <div class="form-group"><input class="form-control form-control-user" type="text" id="SubCity" aria-describedby="emailHelp" placeholder="Sub city" name="SubCity"></div>
                                 <div class="form-group"><input class="form-control form-control-user" type="text" id="Country" aria-describedby="emailHelp" placeholder="Ethiopia" name="Country"></div>
 
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="password" id="PasswordInput" placeholder="Password" name="password"></div>
-                                    <div class="col-sm-6"><input class="form-control form-control-user" type="password" id="RepeatPasswordInput" placeholder="Repeat Password" name="password_repeat"></div>
+                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="password" id="PasswordInput" required placeholder="Password" name="password"></div>
+                                    <div class="col-sm-6"><input class="form-control form-control-user" type="password" id="RepeatPasswordInput" required placeholder="Repeat Password" name="password_repeat"></div>
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <h6 style="height: -4px;margin: 6px;margin-top: 21px;">Please Select Authorization Level</h6>
                                     </div>
-                                    <div class="col-sm-6" style="height: 50px;">
+                                    <div class="col-sm-6" style="height: 50px;" >
                                         <div class="dropdown" style="height: 55px;">
                                         <select name="Authorization" id="Authorization" class="btn btn-primary dropdown-toggle" id="Authorization"  style="height: 41px;padding: 9px;width: 212px;padding-left: 11px;margin-left: 18px;margin-top: 8px;"><button class="btn btn-primary dropdown-toggle">
                                         <option value="Marketer">Marketer &nbsp;</option>

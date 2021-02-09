@@ -3,6 +3,7 @@ const express=require('express');
 const { authUser }= require('../controllers/basicAuth')
 const router =express.Router();
 const axios = require('axios');
+var helpers = require('handlebars-helpers')();
 const asyncHandler =require('express-async-handler')
 
 function manager(req,res,next){
@@ -46,7 +47,6 @@ function finance(req,res,next){
         return res.status(500).render('/login',{message:"authentication error please use an Finance account to access these future"})
     }
 }
-
 function tokenPayload(value){
     return config = {
         headers:{
@@ -56,12 +56,17 @@ function tokenPayload(value){
 }
 function Payment(req){
     return     axios.get('http://strapi.nonstopplc.com:1440/Payments', tokenPayload(req))
-
 }
-
+function Rentedroom(req){
+    return axios.get('http://strapi.nonstopplc.com:1440/Rentals?_where[room.status]=Rented',
+    tokenPayload(req))
+}
 function Rental(req){
     return axios.get('http://strapi.nonstopplc.com:1440/Rentals',
     tokenPayload(req))
+}
+function getRoomNumber(data,req){
+    return axios.get('http://strapi.nonstopplc.com:1440/Rooms/'+data,tokenPayload(req))
 }
 function listPayment(rental,payment){
     var i
@@ -74,6 +79,7 @@ function listPayment(rental,payment){
             if(payment.data[i].rental.id==rental.data[j].id)
             {
                     var data ={
+                        id : payment.data[i].id,
                         cname : rental.data[j].customer.name,
                         roomnumber : rental.data[j].room.roomnumber,
                         paid : payment.data[i].price
@@ -128,13 +134,17 @@ router.get('/logout',auth,(req,res)=>{
 router.get('/',(req,res)=>{
     res.render('login');
 })
-router.get('/index',auth,async(req,res)=>{
+router.get('/index',auth,auth,asyncHandler(async (req,res)=>{
+    Rentedroom = await Rentedroom(req)
+    // Totalrental = await Rental(req)
+    // Totalpayment = await Payment(req)
+    // Totalroom = await Room(req)
+    // Totaltenants = await Tenant(req)
     var htmlFinanace = await isFinanace(req);
     var htmlManager = await isManager(req);
     var htmlMarketer = await isMarketer(req);
-    
-    res.render('index',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager})
-})
+    res.render('index',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager ,image:req.cookies.image,user:req.cookies.user})
+}))
 router.get('/forgot-password',auth,(req,res)=>{
     res.render('forgot-password');
 })
@@ -142,38 +152,54 @@ router.get('/add-rental',auth,marketer,(req,res)=>{
     var htmlFinanace =  isFinanace(req);
     var htmlManager =  isManager(req);
     var htmlMarketer =  isMarketer(req);
-    res.render('add-rental',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager})
+    axios.get('http://strapi.nonstopplc.com:1440/Users/'+req.cookies.id,
+    tokenPayload(req) )
+    .then(function(results){
+        console.log(results)
+    res.render('add-rental',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user: results.data.firstname})
+    })
 })
 router.get('/add-room',auth,marketer,(req,res)=>{
     var htmlFinanace =  isFinanace(req);
     var htmlManager =  isManager(req);
     var htmlMarketer =  isMarketer(req);
-    res.render('add-room',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager})
+    axios.get('http://strapi.nonstopplc.com:1440/Users/'+req.cookies.id,
+    tokenPayload(req) )
+    .then(function(results){
+    res.render('add-room',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user: results.username})
+    })
 })
 router.get('/add-tenant',auth,marketer,(req,res)=>{
     var htmlFinanace =  isFinanace(req);
     var htmlManager =  isManager(req);
     var htmlMarketer =  isMarketer(req);
-    res.render('add-tenant',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager});
+    axios.get('http://strapi.nonstopplc.com:1440/Users/'+req.cookies.id,
+    tokenPayload(req) )
+    .then(function(results){
+    res.render('add-tenant',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user: results.username})
+    })
 })
 router.get('/add-payment',auth,finance,(req,res)=>{
     var htmlFinanace =  isFinanace(req);
     var htmlManager =  isManager(req);
     var htmlMarketer =  isMarketer(req);
-    res.render('add-payment',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager});
-
+    axios.get('http://strapi.nonstopplc.com:1440/Users/'+req.cookies.id,
+    tokenPayload(req) )
+    .then(function(results){
+    res.render('add-payment',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user: results.username})
+    })
 })
 
 router.get('/payment_list',auth,asyncHandler(async (req,res)=>{
 rental = await Rental(req)
 payment = await Payment(req)
 list = listPayment(rental, payment)
-console.log(listPayment(rental,payment))
+//console.log(listPayment(rental,payment))
 var htmlFinanace =  isFinanace(req);
 var htmlManager =  isManager(req);
 var htmlMarketer =  isMarketer(req);
 
-res.render('payment_list',{test : list,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager})
+res.render('payment_list',{test : list,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
 }))
 
 
@@ -186,7 +212,7 @@ router.get('/rental_list',auth,(req,res)=>{
     tokenPayload(req) )
     .then(function(results){
        console.log(results.data)
-       res.render('rental_list',{rental: results.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager})
+       res.render('rental_list',{rental: results.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
     })
     
 })
@@ -200,8 +226,7 @@ router.get('/profile',auth,(req,res)=>{
     axios.get('http://strapi.nonstopplc.com:1440/Users/'+req.cookies.id,
     tokenPayload(req) )
     .then(function(results){
-     console.log(results.data)
-    res.render('profile',{profile: results.data ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager})
+    res.render('profile',{profile: results.data ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
     })
     
 })
@@ -216,22 +241,73 @@ router.get('/room_list',auth,(req,res)=>{
     tokenPayload(req) )
     .then(function(results){
      console.log(results.data[0])
-    res.render('room_list',{room: results.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager})
+    res.render('room_list',{room: results.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
     })
 })
 
 router.get('/table',auth,(req,res)=>{
+    
     res.render('table')
+})
+router.get('/edit-room',auth,marketer,(req,res)=>{
+    var htmlFinanace =  isFinanace(req);
+    var htmlManager =  isManager(req);
+    var htmlMarketer =  isMarketer(req);
+    console.log(req.query.id)
+    axios.get('http://strapi.nonstopplc.com:1440/Rooms/'+req.query.id,
+    tokenPayload(req) )
+    .then(function(results){
+     console.log(results.data)
+    res.render('edit-room',{room: results.data, finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+    })
+    
+})
+router.get('/edit-payment',auth,marketer,asyncHandler(async (req,res)=>{
+    var htmlFinanace =  isFinanace(req);
+    var htmlManager =  isManager(req);
+    var htmlMarketer =  isMarketer(req);
+    
+    axios.get('http://strapi.nonstopplc.com:1440/Payments/'+req.query.id,
+    tokenPayload(req) )
+    .then(async function(results){
+       // console.log(results.data.rental.room)
+    var roomnumb = await getRoomNumber(results.data.rental.room,req)
+    console.log (roomnumb)
+    res.render('edit-payment',{room: roomnumb.data,id:req.query.id , finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+    })
+    
+}))
+router.get('/edit-tenant',auth,(req,res)=>{
+    var htmlFinanace =  isFinanace(req);
+    var htmlManager =  isManager(req);
+    var htmlMarketer =  isMarketer(req);
+    axios.get('http://strapi.nonstopplc.com:1440/Customers/'+req.query.id,
+    tokenPayload(req) )
+    .then(function(results){
+    res.render('edit-tenant',{customers: results.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+    })
+    
+})
+router.get('/edit-rental',auth,(req,res)=>{
+    var htmlFinanace =  isFinanace(req);
+    var htmlManager =  isManager(req);
+    var htmlMarketer =  isMarketer(req);
+    axios.get('http://strapi.nonstopplc.com:1440/Rentals/'+req.query.id,
+    tokenPayload(req) )
+    .then(function(results){
+    res.render('edit-rental',{rental: results.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+    })
+    
 })
 router.get('/tenant_list',auth,(req,res)=>{
     var htmlFinanace =  isFinanace(req);
     var htmlManager =  isManager(req);
     var htmlMarketer =  isMarketer(req);
-    axios.get('http://strapi.nonstopplc.com:1440/Customers',
+    axios.get('http://strapi.nonstopplc.com:1440/Users/'+req.cookies.id,
     tokenPayload(req) )
     .then(function(results){
-     console.log(results.data[0])
-    res.render('tenant_list',{tenant: results.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager})
+        console.log(results)
+    res.render('add-rental',{finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user: results.data.firstname})
     })
     
 })

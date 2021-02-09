@@ -10,6 +10,7 @@ function readCookie(name) {
   }
   return null;
 }
+
 function populateRental(){
   $.ajax({
     url: 'http://strapi.nonstopplc.com:1440/Customers',
@@ -56,10 +57,10 @@ function populateRental(){
  
      
 }
-
+// populate roomnumber
 function populate(){
   $.ajax({
-    url: 'http://strapi.nonstopplc.com:1440/Rentals',
+    url: 'http://strapi.nonstopplc.com:1440/Rentals?_where[0][passed]=false',
     type: 'GET',
     contentType: 'application/json',
     headers:{
@@ -85,7 +86,7 @@ function populate(){
 function gettotalprice() {
   console.log(document.getElementById("room").value)
  $.ajax({
-   url: 'http://strapi.nonstopplc.com:1440/Rentals?_where[room.roomnumber]='+document.getElementById("room").value,
+   url: 'http://strapi.nonstopplc.com:1440/Rentals?_where[0][passed]=false&_where[1][room.roomnumber]='+document.getElementById("room").value,
    type: 'GET',
    contentType: 'application/json',
    headers:{
@@ -120,6 +121,7 @@ function gettotalprice() {
 
     console.log(readCookie("jwt"))
 }
+
 
 var close = document.getElementsByClassName("closebtn");
 var i;

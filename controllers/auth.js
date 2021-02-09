@@ -5,10 +5,15 @@ const { authUser } = require('./basicAuth');
 const { Router, response } = require('express');
 const express=require('express');
 const router =express.Router();
-const { search } = require('../routes/auth');
+const { search, get } = require('../routes/auth');
 const axios = require('axios');
 const pages =require('../routes/pages')
-const { data } = require('jquery');
+const { data, parseHTML } = require('jquery');
+const fs = require('fs');
+var helpers = require('handlebars-helpers')();
+const rp = require('request-promise')
+var FormData = require('form-data');
+
 
 async function marketer(value,res){
     
@@ -85,13 +90,77 @@ function isFinanace(req){
     }
 }
 
-
 // upload pic 
 exports.upload = async(req,res)=>{
+        if(req.file == undefined){
+            return res
+            .cookie('image',req.cookies.image)
+            .redirect(req.get('referer'));
+        }
+        else {
+        let out = await rp({
+            method: 'POST',
+            uri: 'http://strapi.nonstopplc.com:1440/upload',
+            formData: {
+                // Like <input type="text" name="ref">
+                'ref': "user",  // name of the Strapi data type, singular
+                'field': "picture", // a field named "attachments" of type "Media"
+                'refId': req.cookies.id, // strapi ID of object to attach to
+                // Like <input type="file" name="files">
+                "source": "users-permissions",
+                "files": {  // must be called "files" to be "seen" by Strapi Upload module
+                    name: req.file.filename+".jpg",
+                    value: fs.createReadStream(req.file.path),
+                    options: {
+                        filename: req.cookies.id+req.file.originalname,
+
+                        contentType:  'multipart/form-data'
+                    },
+                },
+            },
+            headers: {Authorization: `Bearer ${req.cookies.jwt}`}  // put your JWT code here
+        });
+        await axios.get("http://strapi.nonstopplc.com:1440/Users?_where[id]="+req.cookies.id,
+        tokenPayload(req) )
+        .then(function(resu)
+        {
+            var route="http://strapi.nonstopplc.com:1440"+resu.data[0].picture.url
+
+            return res.cookie('image',route/*getImageurlcookies(req))*/).redirect(req.get('referer'));
+
+        })
+        .catch(function(error){
+            var route= req.cookies.image
+            return res.cookie('image',route).redirect(req.get('referer'));
+
+        })   
+       
+        
+           
+    }
 }
 // Change Password
 exports.changepassword = async(req,res)=>{
-}
+    
+    const {current,latest,confirm} = req.body;
+
+    axios.put (' http://strapi.nonstopplc.com:1440/Users/'+req.cookies.id,
+     {
+       password: latest,
+       passwordConfirmation: confirm,
+     },tokenPayload(req)
+     ) .then (response => {
+       // Handle success.
+       console.log ('Your user \' s password has been changed. ');
+       return res.redirect(req.get('referer'));
+     })
+     .catch (error => {
+       // Handle error.
+       console.log ('An error occurred:', error);
+       return redirect(req.get('referer'));
+     });
+   }
+
 // Login
 exports.login = async (req,res)=>{
 
@@ -108,21 +177,32 @@ exports.login = async (req,res)=>{
                 password: password
             })
             .then(function (response){
+                let val 
+                if (response.data.user.picture == null){
+                    val= "assets/img/dogs/image2.jpeg"
+                }
+                else
+                {
+                    console.log(response.data.user.picture.url)
+                    val= "http://strapi.nonstopplc.com:1440"+response.data.user.picture.url
+                }
                 
-                let val
+                
                 var htmlFinanace =  isFinanace(response.data.user.Autorization);
                 var htmlManager =  isManager(response.data.user.Autorization);
                 var htmlMarketer = isMarketer(response.data.user.Autorization);
                 return res  .cookie('jwt',response.data.jwt)
                             .cookie('aut',response.data.user.Autorization)
                             .cookie('id',response.data.user.id)
+                            .cookie('user',response.data.user.firstname)
+                            .cookie('image',val) //security issue check later
                             .status(200)
-                            .render('index',{data: response.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager})
+                            .render('index',{data: response.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
             })
             .catch(function (error){
                 console.log(error);
                 
-                return res.status(400).render('login',{message: error.response.data.message})
+                return res.status(400).render('login',{message: error.response.data.message,image:req.cookies.image,user:req.cookies.user})
             })
         }
     }catch (error) {
@@ -147,7 +227,6 @@ exports.register = async (req,res)=>{
                 phonenumber: PhoneNumber,
                 city: SubCity,
                 country: Country,
-
             },
             tokenPayload(req) )
             .then(function (response){
@@ -167,6 +246,9 @@ exports.register = async (req,res)=>{
 }
 //Register Customer
 exports.registerCustomer = async(req,res)=>{
+    var htmlFinanace = await isFinanace(req);
+    var htmlManager = await isManager(req);
+    var htmlMarketer = await isMarketer(req);
     if ( await marketer(req,res) ){
     const {username,tin,buisness,contactperson,phonenumber,kebeleid,email,note,password,repeatepassword,status,checkbox}=req.body;
     console.log(req.body)
@@ -193,22 +275,25 @@ exports.registerCustomer = async(req,res)=>{
             })
             .catch(function (error){
                 console.log(error.response.data.message);
-                return res.status(400).render('add-tenant',{message: error.response.data.message})
+                return res.status(400).render('add-tenant',{message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
             })
         }
         else
         {
-            return res.status(400).render('add-tenant',{message: "Password is not the same"})
+            return res.status(400).render('add-tenant',{message: "Password is not the same",finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
         }
     }
     else
        {
-           return res.status(400).render('add-tenant',{message: "Agree to terms and services"})
+           return res.status(400).render('add-tenant',{message: "Agree to terms and services",finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
        }
     }
 }
 //Register Room
 exports.registerRoom = async(req,res)=>{
+    var htmlFinanace = await isFinanace(req);
+    var htmlManager = await isManager(req);
+    var htmlMarketer = await isMarketer(req);
     if ( await marketer(req,res) ){
         const {roomnumber,floor,size,Status}=req.body;
         console.log(req.body)
@@ -234,12 +319,12 @@ exports.registerRoom = async(req,res)=>{
             })
             .catch(function (error){
                 console.log(error);
-                return res.status(400).render('add-room',{message: error.response.data.message})
+                return res.status(400).render('add-room',{message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
             })
         })
         .catch(function(error){
             console.log(error);
-            return res.status(400).render('add-room',{message: error.response.data.message})
+            return res.status(400).render('add-room',{message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
         });
     }
     
@@ -251,6 +336,9 @@ exports.registerRoom = async(req,res)=>{
 }
 //Register Rental
 exports.registerRental = async(req,res)=>{
+    var htmlFinanace = await isFinanace(req);
+    var htmlManager = await isManager(req);
+    var htmlMarketer = await isMarketer(req);
     if ( await marketer(req,res) ){
         const {cname,uid,sdate,edate,price,roomnumber}=req.body;
         console.log(req.body)
@@ -284,23 +372,23 @@ exports.registerRental = async(req,res)=>{
                                 })
                                 .catch(function (error) {
                                     console.log(error);
-                                    return res.status(400).render('add-rental', { message: error.response.data.message });
+                                    return res.status(400).render('add-rental', { message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user});
                                 });
                         }
                         catch (error) {
-                            res.status(400).render('add-rental', { message: "The Tenant Was not found pls check again" });
+                            res.status(400).render('add-rental', { message: "The Tenant Was not found pls check again" ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user});
                         }
 
                     })
                 .catch(function (error){
                     console.log(error);
-                    return results.status(400).render('add-rental',{message: error.response.data.message})
+                    return results.status(400).render('add-rental',{message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
                 })
                 
         })
         .catch(function(error){
             console.log(error);
-            return results.status(400).render('add-rental',{message: error.response.data.message})
+            return results.status(400).render('add-rental',{message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
         })   
     }
 }
@@ -343,75 +431,262 @@ exports.registerPayment = async(req,res)=>{
 
 //Edit 
 exports.editCus= async (req,res)=>{
-    const {Email,Owner,Password,PhoneNumber,TID,PasswordConfirm,BID}=req.body;
-    try{
-        if(Password !== PasswordConfirm){
-            return res.render('editcustomer',{
-                message: "Passwords do not match"
+    const {username,tin,buisness,contactperson,phonenumber,kebeleid,email,note,password,repeatepassword,Status,id}=req.body;
+    var htmlFinanace =  isFinanace(req);
+    var htmlManager =  isManager(req);
+    var htmlMarketer =  isMarketer(req);
+    console.log(Status)
+  if(Status=='')
+  {
+        if ( await marketer(req,res) ){
+   // const {username,tin,buisness,contactperson,phonenumber,kebeleid,email,note,password,repeatepassword,status,checkbox}=req.body;
+    console.log(req.body)
+    
+            axios.put('http://strapi.nonstopplc.com:1440/Customers/'+id,
+            {
+                name: username,
+                email: email,
+                phonenumber: phonenumber,
+                TIN: tin,
+                ContactPerson: contactperson,
+                KebeleId: kebeleid,
+               // Status: Status,
+                buisness: buisness,
+                note: note,
+                //password: password
+
+            },
+            tokenPayload(req) )
+            .then(function (response){
+                
+                return res.status(200).redirect('http://tarman.nonstopplc.com:5001/tenant_list')
+            })
+            .catch(function (error){
+                console.log(error.response);
+                return res.status(400).render('add-tenant',{message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
             })
         }
-        let hashedPassword =await bcrypt.hash(Password,2);;
-        db.query('UPDATE `Customer` SET ? where BID',{Owner:Owner,TID:TID,PhoneNumber:PhoneNumber,Email:Email, Password:hashedPassword, BID},async (error,results)=>{
-           return res.render('editcustomer',{message: results});
-        })
-    
-    }catch (error) {
-        console.log(error);
-    }
-}
-exports.editEmp= async (req,res)=>{
-    const {FirstName,LastName,UserName,AccessLevel,PhoneNumber,Email,UID}=req.body;
-    try{
         
-        db.query('UPDATE `User` SET ? where UID = ?',{FirstName:FirstName,LastName:LastName,UserName:UserName,AccessLevel:AccessLevel,PhoneNumber:PhoneNumber,Email:Email},[UID],async (error,results)=>{
-           return res.render('editemployee',{message: results});
-        })
     
-    }catch (error) {
-        console.log(error);
+    
     }
-}
+    else{
+        if ( await marketer(req,res) ){
+             
+                     axios.put('http://strapi.nonstopplc.com:1440/Customers/'+id,
+                     {
+                         name: username,
+                         email: email,
+                         phonenumber: phonenumber,
+                         TIN: tin,
+                         ContactPerson: contactperson,
+                         KebeleId: kebeleid,
+                         Status: Status,
+                         buisness: buisness,
+                         note: note,
+                         //password: password
+         
+                     },
+                     tokenPayload(req) )
+                     .then(function (response){
+                         console.log(response);
+                         return res.status(200).redirect('http://tarman.nonstopplc.com:5001/tenant_list')
+                     })
+                     .catch(function (error){
+                         console.log(error.response);
+                         return res.status(400).render('add-tenant',{message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+                     })
+                 }
+                
+             
+    }
+  }
+
+
+
 exports.editRoom= async (req,res)=>{
-    const {FID,Price,RoomNumber,Status,UID}=req.body;
-    try{
-        let hashedPassword =await bcrypt.hash(Password,2);;
-        db.query('UPDATE `Room` SET ? where RoomNumber = ?',{FID:FID,Price:Price,RoomNumber:RoomNumber,Status:Status, UID:UID},[RoomNumber],async (error,results)=>{
-           return res.render('editroom',{message: results});
-        })
-    
-    }catch (error) {
-        console.log(error);
+    const {roomnumber,floor,size,Status,id}=req.body;
+    console.log(req.body)
+    var htmlFinanace = await isFinanace(req);
+    var htmlManager = await isManager(req);
+    var htmlMarketer = await isMarketer(req);
+    if(Status==''){
+        if ( await marketer(req,res) ){
+            
+            console.log(req.body)
+            axios.get('http://strapi.nonstopplc.com:1440/Floor-Numbers?_where[floor]='+floor,
+            tokenPayload(req) )
+            .then(function(results)
+            {
+                floorid=results.data[0].id;
+                axios.put('http://strapi.nonstopplc.com:1440/Rooms/'+id,
+                {
+                    roomnumber: roomnumber,
+                    //status: Status,
+                    floor_number: {
+                        id: floorid
+                    },
+                    size: size
+                },
+                tokenPayload(req) )
+                .then(function (response){
+                    console.log(response.data[0]);
+                    return res.redirect('http://tarman.nonstopplc.com:5001/room_list')
+                //  return res.status(200).render('room_list',{room: response.data})
+                })
+                .catch(function (error){
+                    console.log(error);
+                    return res.status(400).render('edit-room',{message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+                })
+            })
+            .catch(function(error){
+                console.log(error);
+                return res.status(400).render('edit-room',{message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+            });
+        }
+        
+
+    }
+    else{
+        if ( await marketer(req,res) ){
+            
+            console.log(req.body)
+            axios.get('http://strapi.nonstopplc.com:1440/Floor-Numbers?_where[floor]='+floor,
+            tokenPayload(req) )
+            .then(function(results)
+            {
+                floorid=results.data[0].id;
+                axios.put('http://strapi.nonstopplc.com:1440/Rooms/'+id,
+                {
+                    roomnumber: roomnumber,
+                    status: Status,
+                    floor_number: {
+                        id: floorid
+                    },
+                    size: size
+                },
+                tokenPayload(req) )
+                .then(function (response){
+                    console.log(response.data[0]);
+                    return res.redirect('http://tarman.nonstopplc.com:5001/room_list')
+                //  return res.status(200).render('room_list',{room: response.data})
+                })
+                .catch(function (error){
+                    console.log(error);
+                    return res.status(400).render('edit-room',{message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+                })
+            })
+            .catch(function(error){
+                console.log(error);
+                return res.status(400).render('edit-room',{message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+            });
+        }
     }
 }
+
 exports.editPayment= async (req,res)=>{
-    const {BID,Paid,RID,RoomNumber,UID,PID}=req.body;
-    try{
-        let hashedPassword =await bcrypt.hash(Password,2);;
-        db.query('UPDATE `Payment` SET ? where PID = ? ',{BID:BID,Paid:Paid,RoomNumber:RoomNumber, UID:UID, RID:RID},[PID],async (error,results)=>{
-           return res.render('editpayment',{message: results});
-        })
-    
-    }catch (error) {
-        console.log(error);
-    }
+     var htmlFinanace = await isFinanace(req);
+    var htmlManager = await isManager(req);
+    var htmlMarketer = await isMarketer(req);
+   
+    if ( await finance(req,res) ){
+        const {roomnumber,month,id}=req.body;
+        console.log(req.body);
+        
+            axios.get('http://strapi.nonstopplc.com:1440/Rentals?_where[room.roomnumber]='+roomnumber,
+            tokenPayload(req) )
+            .then(function(results){
+                axios.put('http://strapi.nonstopplc.com:1440/Payments/'+id,
+            {
+                rental:{
+                    id: results.data[0].id,
+                },
+                price: results.data[0].price*month*1.15,
+                },
+                tokenPayload(req) )
+                .then(function (response){
+                    console.log("response");
+                    return res.redirect('http://tarman.nonstopplc.com:5001/payment_list' )
+                })
+                .catch(function (error){
+                    console.log(error);
+                    return res.status(400).end()
+                })
+                
+            })
+            .catch(function(error){
+                console.log(error);
+                return results.status(400).end()
+            })
+        }
 }
 exports.editRental= async (req,res)=>{
-    const {BID,Price,RoomNumber,UID,RID}=req.body;
-    try{
-        let hashedPassword =await bcrypt.hash(Password,2);;
-        db.query('UPDATE `Payment` SET ? where PID = ? ',{BID:BID,Price:Price,RoomNumber:RoomNumber, UID:UID},[RID],async (error,results)=>{
-           return res.render('editpayment',{message: results});
+    const {cname,sdate,edate,roomnumber,price,id}=req.body;
+    var htmlFinanace = await isFinanace(req);
+    var htmlManager = await isManager(req);
+    var htmlMarketer = await isMarketer(req);
+    if ( await marketer(req,res) ){
+        
+        console.log(req.body)
+        axios.get('http://strapi.nonstopplc.com:1440/Rooms?_where[roomnumber]='+roomnumber,
+        tokenPayload(req) )
+        .then(function(resu)
+        {
+                axios.get('http://strapi.nonstopplc.com:1440/Customers?_where[name]='+cname,
+                tokenPayload(req) )
+                .then( function (results) {
+                        try {
+                             axios.put('http://strapi.nonstopplc.com:1440/Rentals/'+id,
+                                {
+                                    customer: {
+                                        id: results.data[0].id
+                                    },
+                                    users_permissions_user: {
+                                        id: req.cookies.id
+                                    },
+                                    starting: sdate,
+                                    ends: edate,
+                                    price: price,
+                                    room: {
+                                        id: resu.data[0].id,
+                                    }
+                                },
+                                tokenPayload(req))
+                                .then(function (response) {
+                                    console.log(response);
+                                    return res.redirect('http://tarman.nonstopplc.com:5001/rental_list');
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                    return res.status(400).render('edit-rental', { message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user});
+                                });
+                        }
+                        catch (error) {
+                            res.status(400).render('edit-rental', { message: "The Tenant Was not found pls check again" ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user});
+                        }
+
+                    })
+                .catch(function (error){
+                    console.log(error);
+                    return results.status(400).render('edit-rental',{message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+                })
+                
         })
-    
-    }catch (error) {
-        console.log(error);
+        .catch(function(error){
+            console.log(error);
+            return results.status(400).render('edit-rental',{message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+        })   
     }
+  
 }
 
 
 //AdminLog
 
 exports.viewActivity= async (req,res)=>{
+    var htmlFinanace = await isFinanace(req);
+    var htmlManager = await isManager(req);
+    var htmlMarketer = await isMarketer(req);
     try{
         db.query('Select * FROM `Activity`',async (error,results)=>{
            
