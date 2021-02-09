@@ -135,7 +135,7 @@ router.get('/',(req,res)=>{
     res.render('login');
 })
 router.get('/index',auth,auth,asyncHandler(async (req,res)=>{
-    Rentedroom = await Rentedroom(req)
+    //Rentedroom = await Rentedroom(req)
     // Totalrental = await Rental(req)
     // Totalpayment = await Payment(req)
     // Totalroom = await Room(req)
