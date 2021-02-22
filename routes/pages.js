@@ -281,8 +281,11 @@ router.get('/reciept',auth,finance,(req,res)=>{
     .then(async function(results){
        // console.log(results.data.rental.room)
     var rental = await getRental(results.data.rental.id,req)
+    var month = Math.round(results.data.price/(rental.data.price*1.15))
+    var vat =Math.round(results.data.price-(rental.data.price* month))
+    var subtotal =Math.round(rental.data.price* month,vat);
     //console.log (rental.data)
-    res.render('reciept',{layout: false,rentalData:rental.data,payment:results.data,subtotal: rental.data.price* results.data.months,vat: .15 * rental.data.price * results.data.months, finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+    res.render('reciept',{layout: false,month,rentalData:rental.data,payment:results.data,subtotal: subtotal , vat, finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
     })
   //  res.render('refund',{layout:false})
 })

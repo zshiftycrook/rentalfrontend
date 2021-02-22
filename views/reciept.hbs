@@ -80,23 +80,23 @@
                                     <tbody>
                                         <tr>
                                             <td>Payment of Rental for {{payment.starting}} till {{payment.ends}}</td>
-                                            <td class="text-center">{{payment.data.months}}</td>
-                                            <td class="text-center"> {{rentalData.price}}</td>
+                                            <td class="text-center">{{month}}</td>
+                                            <td class="text-center" step='0.01'> {{rentalData.price}}</td>
                                         </tr>
                                        
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th colspan="2" class="text-right">Sub Total:</th>
-                                            <th class="text-center">{{subtotal}}</th>
+                                            <th class="text-center" step='0.01'>{{subtotal}}</th>
                                         </tr>
                                         <tr>
                                             <th colspan="2" class="text-right">15% VAT:</th>
-                                            <th class="text-center">{{vat}}</th>
+                                            <th class="text-center" step='0.01'>{{vat}}</th>
                                         </tr>
                                         <tr>
                                             <th colspan="2" class="text-right">Total:</th>
-                                            <th class="text-center">{{payment.price}}</th>
+                                            <th class="text-center" step='0.01'>{{payment.price}}</th>
                                         </tr>
                                     </tfoot>
                                 </table>
