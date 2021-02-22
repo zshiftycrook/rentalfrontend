@@ -166,15 +166,15 @@
                                 {{/if}}
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Number</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="text" required name="roomnumber"></div>
+                                <div class="col-sm-6 input-column"><input class="form-control" type="text" required name="roomnumber" autocomplete="off"></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Floor</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="text" required name="floor"></div>
+                                <div class="col-sm-6 input-column"><input class="form-control" type="text" required name="floor" autocomplete="off"></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Size</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="number" name="size"></div>
+                                <div class="col-sm-6 input-column"><input class="form-control" type="number" name="size" autocomplete="off"></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="dropdown-input-field">Status&nbsp;</label></div>
@@ -182,8 +182,8 @@
                                     <div class="dropdown">
                                         <select name="Status" id="Status" class="btn btn-primary dropdown-toggle" ><button class="btn btn-primary dropdown-toggle">
                                         <option value="Rented">Rented &nbsp;</option>
-                                        <option value="Maintainance">Maintainance</option>
-                                        <option value="Available">Available</option>
+                                        <option value="Maintenance">Maintainance</option>
+                                        <option value="Available" selected>Available</option>
                                         </select>                                        
                                 </div>
                             </div><button class="btn btn-light submit-button" type="submit">Submit Room</button></form>

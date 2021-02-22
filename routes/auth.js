@@ -19,6 +19,8 @@ router.post('/registerRoom',authController.registerRoom)
 router.post('/upload',upload.single('myprofile'),authController.upload)
 router.post('/registerRental', authController.registerRental)
 router.post('/changePassword',authController.changepassword)
+router.post('/terminate-rental',authController.terminaterental)
+router.post('/refund',authController.refund);
 //List
 
 // //Delete

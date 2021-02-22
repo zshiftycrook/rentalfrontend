@@ -167,7 +167,7 @@
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Number</label></div>
                                 
                                 <div class="col-sm-6 input-column">
-                                <input id="room" list="roomnumber" name="roomnumber" type="text" class="form-control" id="room" onchange="gettotalprice()">
+                                <input id="room" list="roomnumber" name="roomnumber" type="text" class="form-control" id="room" onchange="gettotalprice()" autocomplete="off">
                                 <datalist id="roomnumber">
                                     
                                 </datalist>
@@ -181,6 +181,7 @@
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Remaining lease Time&nbsp;</label></div>
                                 <div class="col-sm-6 input-column"><input id="lease"class="form-control" type="text" name="leasetime" disabled></div>
                             </div>
+                           
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Paid for (number of month)</label></div>
                                 <div class="col-sm-6 input-column"><input required id="month" class="form-control" type="number" name="month"  onchange="gettotalprice()"></div>

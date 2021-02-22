@@ -186,6 +186,7 @@
                                         <th>RoomNumber</th>
                                         <th>Paid</th>
                                         <th>Edit</th>
+                                        <th>Print</th>
                                     </tr>
                                 </thead>
                                      <tbody>
@@ -199,6 +200,23 @@
                                                         <button type="submit" id="id" name="id" value="{{this.id}}" class="btn btn-primary" >Edit</button>
                                                     </form>
                                      </td> 
+                                     <td>
+                                                    <form action="/reciept" method="Get"> 
+                                                        <button type="submit" id="id" name="id" value="{{this.id}}" class="btn btn-primary" >Reciept</button>
+                                                    </form>
+                                     </td> 
+                                     {{#if this.refundable}}
+                                     <td>
+                                                    <form action="/auth/refund" method="POST"> 
+                                                        <button type="submit" id="id" name="id" value="{{this.id}}" class="btn btn-primary" >Refund</button>
+                                                    </form>
+                                     </td> 
+                                     {{/if}}
+                                      {{#unless this.refundable}}
+                                     <td>
+                                                    <a>Not Refundable</a>
+                                     </td> 
+                                     {{/unless}}
                                   </tr>             
                               {{/each}}
                         </tbody>

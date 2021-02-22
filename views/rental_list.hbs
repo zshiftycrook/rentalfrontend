@@ -191,6 +191,7 @@
                                         <th>Size</th>
                                         <th>Price</th>
                                         <th>Edit</th>
+                                        <th>Terminate</th>
 
 
                                     </tr>
@@ -209,6 +210,17 @@
                                                     <form action="/edit-rental" method="GET"> 
                                                         <button type="submit" name="id" id="id" value="{{this.id}}" class="btn btn-primary" >Edit</button>
                                                     </form>
+                                     </td>   
+                                     <td>
+                                       {{#unless this.passed}}  
+
+                                                    <form action="/auth/terminate-rental" method="post"> 
+                                                        <button type="submit" name="id" id="id" value="{{this.id}}" class="btn btn-primary" >Terminate</button>
+                                                    </form>
+                                         {{/unless}}
+                                         {{#if this.passed}}
+                                         <label>Rental A100pxgreement has Terminated or Passed</label>
+                                         {{/if}}
                                      </td>   
                                   </tr>
                                   
