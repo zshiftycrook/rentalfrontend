@@ -806,6 +806,7 @@ exports.terminaterental= async(req,res)=>{
                 },
                 tokenPayload(req))
                     .then(function(change){
+                       return res.redirect(req.get('referer'));
 
                     })
                     .catch(function (error){
