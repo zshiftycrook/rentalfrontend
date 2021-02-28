@@ -249,6 +249,9 @@
                                                 <div class="col">
                                                     <div class="form-group"><label for="last_name"><strong>Last Name</strong></label><input class="form-control" type="text" {{#if profile}}placeholder="{{profile.lastname}}"{{/if}} name="last_name" disabled></div>
                                                 </div>
+                                                 <div class="col">
+                                                    <div class="form-group"><label for="authentication"><strong>Authentication</strong></label><input class="form-control" type="text" {{#if profile}}placeholder="{{profile.Autorization}}"{{/if}} name="authentication" disabled></div>
+                                                </div>
                                             </div>
                                             <div class="form-group"><button class="btn btn-primary btn-sm" type="submit" hidden>Save Settings</button></div>
                                         </form>

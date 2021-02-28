@@ -90,6 +90,83 @@ function addMonths(date, months) {
   }
   return date;
 }
+function subtractMonths(date,months)
+{
+  var d = date.getDate();
+  date.setMonth(date.getMonth() - months);
+  console.log(date)
+  if (date.getDate() != d) {
+    date.setDate(0);
+  }
+  return date;
+}
+
+function getRental(id){
+  return new Promise((resolve,reject)=>{
+    $.ajax({
+      url: 'http://strapi.nonstopplc.com:1440/Rentals/'+id,
+      type: 'GET',
+      contentType: 'application/json',
+      headers:{
+        'Authorization': 'Bearer '+readCookie("jwt")
+      },
+      success: function(result){
+        console.log(result);
+        resolve (result);
+      },
+      error: function(error){
+       resolve (0);
+      }
+    }) 
+  })
+
+}
+
+function paiduntil(rid){
+  return new Promise((resolve,reject)=>{
+
+  console.log("paid")
+  var lastpayed = null ;
+  $.ajax({
+    url: 'http://strapi.nonstopplc.com:1440/Payments?_where[rental.id]='+rid,
+    type: 'GET',
+    contentType: 'application/json',
+    headers:{
+      'Authorization': 'Bearer '+readCookie("jwt")
+    },
+    success:  async function(results){
+      
+      if(results.data == undefined){
+        var j= await getRental(rid);
+        
+        //console.log(j)
+        lastpayed = j.starting
+        resolve (lastpayed);
+        
+    }
+    else{ 
+        for (var i=0;results.data[i]!= undefined; i++){
+        if(lastpayed == null){
+           lastpayed = results.data[i].ends
+           
+        }
+        else if(lastpayed<results.data[i].ends){
+            lastpayed = results.data[i].ends
+            
+        }
+        
+    }}
+     
+    //resolve (lastpayed);
+    },
+    error: function(error){
+     resolve ("0");
+    }
+  })
+
+  }) 
+  
+}
 
 function gettotalprice() {
   console.log(document.getElementById("room").value)
@@ -100,38 +177,61 @@ function gettotalprice() {
    headers:{
      'Authorization': 'Bearer '+readCookie("jwt")
    },
-   success: function(result){
+   success:  async function(result){
     
     const now = new Date();
     const ending = new Date(result[0].ends)
+    const lastpaid = new Date(await paiduntil(result[0].id))
+    console.log(lastpaid)
+    //Remaning Rental
     var months;
     months = (ending.getFullYear() - now.getFullYear()) * 12;
     months -= now.getMonth();
     months += ending.getMonth();
-    diffmonth = months <= 0 ? 0 : months;
+    diffmonth = months <= 0 ? months : months;
     addedmonth = addMonths(now,diffmonth)
-   // console.log(diffmonth)
-    
-    console.log(addedmonth)
-    
-  
     const dateFromAPI = ending;
-    
     const datefromAPITimeStamp = (new Date(dateFromAPI)).getTime();
     const nowTimeStamp = addedmonth.getTime();
     const microSecondsDiff = Math.abs(datefromAPITimeStamp - nowTimeStamp);
-    console.log(microSecondsDiff)
+    //console.log(microSecondsDiff)
     // console.log(nowTimeStamp)
     // Math.round is used instead of Math.floor to account for certain DST cases
     // Number of milliseconds per day =
     //   24 hrs/day * 60 minutes/hour * 60 seconds/minute * 1000 ms/second
     const daysDiff = Math.round(microSecondsDiff / (1000 * 60 * 60  * 24));
-    console.log(daysDiff)
-     console.log(document.getElementById("month").value)
+    //console.log(daysDiff)
+    // console.log(document.getElementById("month").value)
+    //////////////////////////////////////////////////////////////////////////////////////////
+    //Remaining Payment
+    var pmonths;
+    pmonths = (lastpaid.getFullYear() - now.getFullYear()) * 12;
+    pmonths -= now.getMonth();
+    pmonths += lastpaid.getMonth();
+    pdiffmonth = pmonths <= 0 ? 0 : pmonths;
+    //if (pmonths>0){
+      paddedmonth = addMonths(now,pdiffmonth)
+      const pdateFromAPI = lastpaid;
+      const pdatefromAPITimeStamp = (new Date(pdateFromAPI)).getTime();
+      const pnowTimeStamp = paddedmonth.getTime();
+      const pmicroSecondsDiff = Math.abs(pdatefromAPITimeStamp - pnowTimeStamp);
+      var pdaysDiff = Math.round(pmicroSecondsDiff / (1000 * 60 * 60  * 24));
+  //  }
+    // else{
+    //   addedmonth = addMonths(now,diffmonth)
+    //   const dateFromAPI = ending;
+    //   const datefromAPITimeStamp = (new Date(dateFromAPI)).getTime();
+    //   const nowTimeStamp = addedmonth.getTime();
+    //   const microSecondsDiff = Math.abs(datefromAPITimeStamp - nowTimeStamp);
+
+    // }
+
+    
      
      document.getElementById("total").value=result[0].price*document.getElementById("month").value*1.15;
      if (document.getElementById("month").value == ''){document.getElementById("total").value=result[0].price*1.15;}
      document.getElementById("tenant").value=result[0].customer.name
+     document.getElementById("paid").value=pmonths+" Months "+pdaysDiff+" Days" 
      document.getElementById("lease").value=diffmonth +" Months "+daysDiff+" Days "
      document.getElementById("total").max = result[0].price
    },

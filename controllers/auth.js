@@ -344,7 +344,7 @@ exports.registerCustomer = async(req,res)=>{
             })
             .catch(function (error){
                 console.log(error.response.data.message);
-                return res.status(400).render('add-tenant',{layout: false,message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+                return res.status(400).redirect('http://tarman.nonstopplc.com:5001/tenant_list')
             })
         }
         else
@@ -490,7 +490,7 @@ exports.registerPayment = async(req,res)=>{
             
             var ending = await addMonths(start,month)
             
-            axios.post('http://strapi.nonstopplc.com:1440/Payments',
+            axios.post('http://stramyspi.nonstopplc.com:1440/Payments',
         {
             starting: start ,
             ends: ending,
