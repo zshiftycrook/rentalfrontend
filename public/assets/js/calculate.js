@@ -84,11 +84,12 @@ function populate(){
 }
 function addMonths(date, months) {
   var d = date.getDate();
-  date.setMonth(date.getMonth() + +months);
-  if (date.getDate() != d) {
-    date.setDate(0);
+  const date1= new Date(date);
+  date1.setMonth(date1.getMonth() + +months);
+  if (date1.getDate() != d) {
+    date1.setDate(0);
   }
-  return date;
+  return date1;
 }
 function subtractMonths(date,months)
 {
@@ -139,7 +140,7 @@ function paiduntil(rid){
       if(results.data == undefined){
         var j= await getRental(rid);
         
-        //console.log(j)
+       // console.log(j)
         lastpayed = j.starting
         resolve (lastpayed);
         
@@ -155,7 +156,9 @@ function paiduntil(rid){
             
         }
         
-    }}
+    }
+    resolve(lastpayed)
+  }
      
     //resolve (lastpayed);
     },
@@ -166,6 +169,27 @@ function paiduntil(rid){
 
   }) 
   
+}
+function getMonth(ending,now){
+ 
+  //console.log(now)
+  //Remaning Rental
+  var months;
+  months = (ending.getFullYear() - now.getFullYear()) * 12;
+  months -= now.getMonth();
+  months += ending.getMonth();
+  diffmonth = months <= 0 ? months : months;
+  
+  return (diffmonth);
+
+}
+function getDays(addedmonth,ending){
+  const dateFromAPI = ending;
+  const datefromAPITimeStamp = (new Date(dateFromAPI)).getTime();
+  const nowTimeStamp = addedmonth.getTime();
+  const microSecondsDiff = Math.abs(datefromAPITimeStamp - nowTimeStamp);
+  const daysDiff = Math.round(microSecondsDiff / (1000 * 60 * 60  * 24));
+  return daysDiff
 }
 
 function gettotalprice() {
@@ -178,60 +202,76 @@ function gettotalprice() {
      'Authorization': 'Bearer '+readCookie("jwt")
    },
    success:  async function(result){
-    
     const now = new Date();
-    const ending = new Date(result[0].ends)
-    const lastpaid = new Date(await paiduntil(result[0].id))
-    console.log(lastpaid)
-    //Remaning Rental
-    var months;
-    months = (ending.getFullYear() - now.getFullYear()) * 12;
-    months -= now.getMonth();
-    months += ending.getMonth();
-    diffmonth = months <= 0 ? months : months;
-    addedmonth = addMonths(now,diffmonth)
-    const dateFromAPI = ending;
-    const datefromAPITimeStamp = (new Date(dateFromAPI)).getTime();
-    const nowTimeStamp = addedmonth.getTime();
-    const microSecondsDiff = Math.abs(datefromAPITimeStamp - nowTimeStamp);
-    //console.log(microSecondsDiff)
-    // console.log(nowTimeStamp)
-    // Math.round is used instead of Math.floor to account for certain DST cases
-    // Number of milliseconds per day =
-    //   24 hrs/day * 60 minutes/hour * 60 seconds/minute * 1000 ms/second
-    const daysDiff = Math.round(microSecondsDiff / (1000 * 60 * 60  * 24));
-    //console.log(daysDiff)
-    // console.log(document.getElementById("month").value)
-    //////////////////////////////////////////////////////////////////////////////////////////
-    //Remaining Payment
-    var pmonths;
-    pmonths = (lastpaid.getFullYear() - now.getFullYear()) * 12;
-    pmonths -= now.getMonth();
-    pmonths += lastpaid.getMonth();
-    pdiffmonth = pmonths <= 0 ? 0 : pmonths;
-    //if (pmonths>0){
-      paddedmonth = addMonths(now,pdiffmonth)
-      const pdateFromAPI = lastpaid;
-      const pdatefromAPITimeStamp = (new Date(pdateFromAPI)).getTime();
-      const pnowTimeStamp = paddedmonth.getTime();
-      const pmicroSecondsDiff = Math.abs(pdatefromAPITimeStamp - pnowTimeStamp);
-      var pdaysDiff = Math.round(pmicroSecondsDiff / (1000 * 60 * 60  * 24));
-  //  }
-    // else{
-    //   addedmonth = addMonths(now,diffmonth)
-    //   const dateFromAPI = ending;
-    //   const datefromAPITimeStamp = (new Date(dateFromAPI)).getTime();
-    //   const nowTimeStamp = addedmonth.getTime();
-    //   const microSecondsDiff = Math.abs(datefromAPITimeStamp - nowTimeStamp);
 
-    // }
+    const lastpaid = new Date(await paiduntil(result[0].id))
+    const ending = new Date(result[0].ends)
+    var diffmonth=getMonth(ending,now)
+    var addedmonth = addMonths(now,diffmonth)
+    var daysDiff=getDays(addedmonth,ending)
+
+    var pdiffmonth=getMonth(now,lastpaid)
+    if (pdiffmonth==0)
+    {
+      pdiffmonth=getMonth(lastpaid,now)
+      var paddedmonth = addMonths(lastpaid,pdiffmonth)
+      var pdaysDiff=getDays(paddedmonth,now)
+      document.getElementById("paid").value="The Client is ovedue "+pdiffmonth+" months and "+pdaysDiff+" Days"; 
+      document.getElementById("month").max=(diffmonth+pdiffmonth)
+    }
+    else
+    {
+      var paddedmonth = addMonths(now,pdiffmonth)
+      var pdaysDiff =getDays(paddedmonth,now)
+      document.getElementById("paid").value=pdiffmonth+" Months "+pdaysDiff+" Days" 
+      document.getElementById("month").max=(diffmonth-pdiffmonth)
+    }
+    
+    
+  
+    //Remaining Payment
+
+  //   var pmonths;
+  //   pmonths = (lastpaid.getFullYear() - now.getFullYear()) * 12;
+  //   pmonths -= now.getMonth();
+  //   console.log(now)
+  //   pmonths += lastpaid.getMonth();
+    
+  //   pdiffmonth = pmonths <= 0 ? 0 : pmonths;
+    
+  //   if (pmonths>0){
+  //     paddedmonth = addMonths(now,pdiffmonth)
+  //     const pdateFromAPI = lastpaid;
+  //     const pdatefromAPITimeStamp = (new Date(pdateFromAPI)).getTime();
+  //     const pnowTimeStamp = paddedmonth.getTime();
+  //     const pmicroSecondsDiff = Math.abs(pdatefromAPITimeStamp - pnowTimeStamp);
+  //     var pdaysDiff = Math.round(pmicroSecondsDiff / (1000 * 60 * 60  * 24));
+  //     document.getElementById("paid").value=pmonths+" Months "+pdaysDiff+" Days" 
+  //  }
+  //   else{
+  //     pmonths=null;
+  //     pmonths = (lastpaid.getFullYear() - now.getFullYear()) * 12;
+  //     pmonths -= lastpaid.getMonth();
+  //     pmonths += now.getMonth();
+     
+  //     pdiffmonth = pmonths <= 0 ? 0 : pmonths;
+  //     //console.log(lastpaid)
+  //     paddedmonth = addMonths(lastpaid,pdiffmonth)
+  //     const pdateFromAPI = now;
+  //     const pdatefromAPITimeStamp = (new Date(pdateFromAPI)).getTime();
+  //     const pnowTimeStamp = addedmonth.getTime();
+  //     const pmicroSecondsDiff = Math.abs(pdatefromAPITimeStamp - pnowTimeStamp);
+  //     var pdaysDiff = Math.round(pmicroSecondsDiff / (1000 * 60 * 60  * 24));
+  //    
+
+  //   }
 
     
      
      document.getElementById("total").value=result[0].price*document.getElementById("month").value*1.15;
      if (document.getElementById("month").value == ''){document.getElementById("total").value=result[0].price*1.15;}
      document.getElementById("tenant").value=result[0].customer.name
-     document.getElementById("paid").value=pmonths+" Months "+pdaysDiff+" Days" 
+     
      document.getElementById("lease").value=diffmonth +" Months "+daysDiff+" Days "
      document.getElementById("total").max = result[0].price
    },

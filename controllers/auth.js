@@ -486,13 +486,14 @@ exports.registerPayment = async(req,res)=>{
         tokenPayload(req) )
         .then(async function(results){
             
-            var start = new Date(await paidunitil(req,results.data[0].id)) 
+            const start = new Date(await paidunitil(req,results.data[0].id)) 
+            var starting=new Date(start);
             
-            var ending = await addMonths(start,month)
+            const ending = await addMonths(start,month)
             
-            axios.post('http://stramyspi.nonstopplc.com:1440/Payments',
+            axios.post('http://strapi.nonstopplc.com:1440/Payments',
         {
-            starting: start ,
+            starting: starting,
             ends: ending,
             rental:{
                 id: results.data[0].id,
@@ -502,7 +503,7 @@ exports.registerPayment = async(req,res)=>{
             },
             tokenPayload(req) )
             .then(function (response){
-               // console.log("response");
+               
                 return res.cookie('jwt',req.cookies.jwt)
                 .redirect('http://tarman.nonstopplc.com:5001/payment_list' )
             })
@@ -688,15 +689,22 @@ exports.editPayment= async (req,res)=>{
    
     if ( await finance(req,res) ){
         const {roomnumber,month,id,sdate}=req.body;
-        console.log(req.body);
+        //console.log(req.body);
         
             axios.get('http://strapi.nonstopplc.com:1440/Rentals?_where[room.roomnumber]='+roomnumber,
             tokenPayload(req) )
-            .then(function(results){
+            .then(async function(results){
+                
+                const start = new Date(await paidunitil(req,results.data[0].id)) 
+
+                var starting=new Date(start);
+                
+                const ending = await addMonths(start,month)
+            
                 axios.put('http://strapi.nonstopplc.com:1440/Payments/'+id,
             {
-               // starting:sdate,
-               // ends: date.addMonths(sdate, month),
+                starting:starting,
+                ends:ending,
                 rental:{
                     id: results.data[0].id,
                 },
