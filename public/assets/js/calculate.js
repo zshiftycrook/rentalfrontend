@@ -226,48 +226,9 @@ function gettotalprice() {
       document.getElementById("paid").value=pdiffmonth+" Months "+pdaysDiff+" Days" 
       document.getElementById("month").max=(diffmonth-pdiffmonth)
     }
-    
-    
-  
-    //Remaining Payment
-
-  //   var pmonths;
-  //   pmonths = (lastpaid.getFullYear() - now.getFullYear()) * 12;
-  //   pmonths -= now.getMonth();
-  //   console.log(now)
-  //   pmonths += lastpaid.getMonth();
-    
-  //   pdiffmonth = pmonths <= 0 ? 0 : pmonths;
-    
-  //   if (pmonths>0){
-  //     paddedmonth = addMonths(now,pdiffmonth)
-  //     const pdateFromAPI = lastpaid;
-  //     const pdatefromAPITimeStamp = (new Date(pdateFromAPI)).getTime();
-  //     const pnowTimeStamp = paddedmonth.getTime();
-  //     const pmicroSecondsDiff = Math.abs(pdatefromAPITimeStamp - pnowTimeStamp);
-  //     var pdaysDiff = Math.round(pmicroSecondsDiff / (1000 * 60 * 60  * 24));
-  //     document.getElementById("paid").value=pmonths+" Months "+pdaysDiff+" Days" 
-  //  }
-  //   else{
-  //     pmonths=null;
-  //     pmonths = (lastpaid.getFullYear() - now.getFullYear()) * 12;
-  //     pmonths -= lastpaid.getMonth();
-  //     pmonths += now.getMonth();
-     
-  //     pdiffmonth = pmonths <= 0 ? 0 : pmonths;
-  //     //console.log(lastpaid)
-  //     paddedmonth = addMonths(lastpaid,pdiffmonth)
-  //     const pdateFromAPI = now;
-  //     const pdatefromAPITimeStamp = (new Date(pdateFromAPI)).getTime();
-  //     const pnowTimeStamp = addedmonth.getTime();
-  //     const pmicroSecondsDiff = Math.abs(pdatefromAPITimeStamp - pnowTimeStamp);
-  //     var pdaysDiff = Math.round(pmicroSecondsDiff / (1000 * 60 * 60  * 24));
-  //    
-
-  //   }
 
     
-     
+     document.getElementById("month").min=0;
      document.getElementById("total").value=result[0].price*document.getElementById("month").value*1.15;
      if (document.getElementById("month").value == ''){document.getElementById("total").value=result[0].price*1.15;}
      document.getElementById("tenant").value=result[0].customer.name
