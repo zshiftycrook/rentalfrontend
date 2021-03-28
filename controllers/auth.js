@@ -16,7 +16,7 @@ const Handlebars = require('handlebars');
 const HandlebarsIntl = require('handlebars-intl');
 const rp = require('request-promise')
 var FormData = require('form-data');
-
+var parkingcost = 500;
 function addMonths(date, months) {
     var d = date.getDate();
     date.setMonth(date.getMonth() + +months);
@@ -420,7 +420,7 @@ exports.registerRental = async(req,res)=>{
     var htmlManager = await isManager(req);
     var htmlMarketer = await isMarketer(req);
     if ( await marketer(req,res) ){
-        const {cname,uid,sdate,edate,price,roomnumber}=req.body;
+        const {cname,uid,sdate,edate,price,roomnumber,parking}=req.body;
         console.log(req.body)
         axios.get('http://strapi.nonstopplc.com:1440/Rooms?_where[roomnumber]='+roomnumber,
         tokenPayload(req) )
@@ -434,6 +434,7 @@ exports.registerRental = async(req,res)=>{
                         try {
                              axios.post('http://strapi.nonstopplc.com:1440/Rentals',
                                 {
+                                    parking:parking,
                                     customer: {
                                         id: results.data[0].id
                                     },
@@ -479,7 +480,7 @@ exports.registerRental = async(req,res)=>{
 //Register Payment
 exports.registerPayment = async(req,res)=>{
     if ( await finance(req,res) ){
-    const {roomnumber,month}=req.body;
+    const {roomnumber,month,serial}=req.body;
    // console.log(req.body);
     
         axios.get('http://strapi.nonstopplc.com:1440/Rentals?_where[room.roomnumber]='+roomnumber+'&_where[passed] =false',
@@ -493,13 +494,15 @@ exports.registerPayment = async(req,res)=>{
             
             axios.post('http://strapi.nonstopplc.com:1440/Payments',
         {
+            pcost: results.data[0].parking*month*parkingcost*1.15,
             starting: starting,
             ends: ending,
             rental:{
                 id: results.data[0].id,
             },
-            price: results.data[0].price*month*1.15,
-            months : month
+            price: month*((results.data[0].price*1.15)),
+            months : month,
+            Serial : serial
             },
             tokenPayload(req) )
             .then(function (response){
@@ -688,7 +691,7 @@ exports.editPayment= async (req,res)=>{
     var htmlMarketer = await isMarketer(req);
    
     if ( await finance(req,res) ){
-        const {roomnumber,month,id,sdate}=req.body;
+        const {roomnumber,month,id,sdate,serial}=req.body;
         //console.log(req.body);
         
             axios.get('http://strapi.nonstopplc.com:1440/Rentals?_where[room.roomnumber]='+roomnumber,
@@ -708,7 +711,8 @@ exports.editPayment= async (req,res)=>{
                 rental:{
                     id: results.data[0].id,
                 },
-                price: results.data[0].price*month*1.15,
+                price: month*((results.data[0].price*1.15)),
+                Serial : serial
                 },
                 tokenPayload(req) )
                 .then(function (response){
@@ -729,7 +733,7 @@ exports.editPayment= async (req,res)=>{
         }
 }
 exports.editRental= async (req,res)=>{
-    const {cname,sdate,edate,roomnumber,price,id}=req.body;
+    const {cname,sdate,edate,roomnumber,price,id,parking}=req.body;
     var htmlFinanace = await isFinanace(req);
     var htmlManager = await isManager(req);
     var htmlMarketer = await isMarketer(req);
@@ -746,6 +750,9 @@ exports.editRental= async (req,res)=>{
                         try {
                              axios.put('http://strapi.nonstopplc.com:1440/Rentals/'+id,
                                 {
+                                    pcost: results.data[0].parking*month*parkingcost*1.15,
+
+                                    parking:parking,
                                     customer: {
                                         id: results.data[0].id
                                     },

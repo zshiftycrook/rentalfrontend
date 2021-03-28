@@ -289,6 +289,24 @@ router.get('/reciept',auth,finance,(req,res)=>{
     })
   //  res.render('refund',{layout:false})
 })
+router.get('/parkingreciept',auth,finance,(req,res)=>{
+    var htmlFinanace =  isFinanace(req);
+    var htmlManager =  isManager(req);
+    var htmlMarketer =  isMarketer(req);
+    axios.get('http://strapi.nonstopplc.com:1440/Payments/'+req.query.id,
+    tokenPayload(req) )
+    .then(async function(results){
+       // console.log(results.data.rental.room)
+    var rental = await getRental(results.data.rental.id,req)
+    var month = Math.round(results.data.price/(rental.data.price*1.15))
+    var subtotal =Math.round(rental.data.parking*500* month);
+    var vat =Math.round(subtotal*.15)
+    
+    //console.log (rental.data)
+    res.render('reciept',{layout: false,month,rentalData:rental.data,payment:results.data,subtotal: subtotal , vat, finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+    })
+  //  res.render('refund',{layout:false})
+})
 router.get('/add-room',auth,marketer,(req,res)=>{
     var htmlFinanace =  isFinanace(req);
     var htmlManager =  isManager(req);

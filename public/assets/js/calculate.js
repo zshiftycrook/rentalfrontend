@@ -126,7 +126,6 @@ function getRental(id){
 function paiduntil(rid){
   return new Promise((resolve,reject)=>{
 
-  console.log("paid")
   var lastpayed = null ;
   $.ajax({
     url: 'http://strapi.nonstopplc.com:1440/Payments?_where[rental.id]='+rid,
@@ -137,26 +136,29 @@ function paiduntil(rid){
     },
     success:  async function(results){
       
-      if(results.data == undefined){
+      if(results[0] == undefined){
         var j= await getRental(rid);
         
-       // console.log(j)
+     
         lastpayed = j.starting
         resolve (lastpayed);
         
     }
     else{ 
-        for (var i=0;results.data[i]!= undefined; i++){
+        for (var i=0;results[i]!= undefined; i++){
         if(lastpayed == null){
-           lastpayed = results.data[i].ends
+           lastpayed = results[i].ends
            
         }
-        else if(lastpayed<results.data[i].ends){
-            lastpayed = results.data[i].ends
+        else if(lastpayed<results[i].ends){
+            lastpayed = results[i].ends
             
         }
         
     }
+
+  console.log(rid)
+  console.log(lastpayed)
     resolve(lastpayed)
   }
      
@@ -183,11 +185,25 @@ function getMonth(ending,now){
   return (diffmonth);
 
 }
+function getMonth2(ending,now){
+ 
+  //console.log(now)
+  //Remaning Rental
+  var months;
+  months = (ending.getFullYear() - now.getFullYear()) * 12;
+  months -= now.getMonth();
+  months += ending.getMonth();
+  diffmonth = months ;
+  
+  return (diffmonth);
+
+}
 function getDays(addedmonth,ending){
   const dateFromAPI = ending;
   const datefromAPITimeStamp = (new Date(dateFromAPI)).getTime();
   const nowTimeStamp = addedmonth.getTime();
   const microSecondsDiff = Math.abs(datefromAPITimeStamp - nowTimeStamp);
+  console.log(microSecondsDiff)
   const daysDiff = Math.round(microSecondsDiff / (1000 * 60 * 60  * 24));
   return daysDiff
 }
@@ -206,33 +222,43 @@ function gettotalprice() {
 
     const lastpaid = new Date(await paiduntil(result[0].id))
     const ending = new Date(result[0].ends)
+    console.log(lastpaid)
     var diffmonth=getMonth(ending,now)
     var addedmonth = addMonths(now,diffmonth)
     var daysDiff=getDays(addedmonth,ending)
 
-    var pdiffmonth=getMonth(now,lastpaid)
-    if (pdiffmonth==0)
+    var pdiffmonth=getMonth2(lastpaid,now)
+    console.log(pdiffmonth)
+    //var p2diffmonth=getMonth(now,lastpaid)
+    if (pdiffmonth<0)
     {
-      pdiffmonth=getMonth(lastpaid,now)
+      pdiffmonth=(await getMonth(lastpaid,now))*(-1)
+      
+      
+     
       var paddedmonth = addMonths(lastpaid,pdiffmonth)
       var pdaysDiff=getDays(paddedmonth,now)
       document.getElementById("paid").value="The Client is ovedue "+pdiffmonth+" months and "+pdaysDiff+" Days"; 
       document.getElementById("month").max=(diffmonth+pdiffmonth)
+      console.log(pdaysDiff)
     }
     else
     {
       var paddedmonth = addMonths(now,pdiffmonth)
-      var pdaysDiff =getDays(paddedmonth,now)
+      //paddedmonth - pdiffmonth
+      //var currentMonth = currentDate.getMonth()+1;
+      var pdaysDiff =getDays(lastpaid,paddedmonth)
       document.getElementById("paid").value=pdiffmonth+" Months "+pdaysDiff+" Days" 
       document.getElementById("month").max=(diffmonth-pdiffmonth)
+      console.log(paddedmonth)
     }
 
     
      document.getElementById("month").min=0;
-     document.getElementById("total").value=result[0].price*document.getElementById("month").value*1.15;
-     if (document.getElementById("month").value == ''){document.getElementById("total").value=result[0].price*1.15;}
+     document.getElementById("total").value=document.getElementById("month").value*1.15*((result[0].price)+(result[0].parking*500));
+     if (document.getElementById("month").value == ''){document.getElementById("total").value=result[0].price*1.15+(result[0].parking*500);}
      document.getElementById("tenant").value=result[0].customer.name
-     
+     document.getElementById("")
      document.getElementById("lease").value=diffmonth +" Months "+daysDiff+" Days "
      document.getElementById("total").max = result[0].price
    },

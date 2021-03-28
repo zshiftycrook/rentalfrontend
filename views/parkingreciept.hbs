@@ -79,9 +79,9 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>Payment of Rental for {{payment.starting}} till {{payment.ends}}</td>
+                                            <td>Payment of Parking for {{payment.starting}} till {{payment.ends}}</td>
                                             <td class="text-center">{{month}}</td>
-                                            <td class="text-center" step='0.01'> {{rentalData.price}}</td>
+                                            <td class="text-center" step='0.01'> 500</td>
                                         </tr>
                                        
                                     </tbody>
@@ -96,7 +96,7 @@
                                         </tr>
                                         <tr>
                                             <th colspan="2" class="text-right">Total:</th>
-                                            <th class="text-center" step='0.01'>{{payment.price}}</th>
+                                            <th class="text-center" step='0.01'>{{vat+subtotal}}</th>
                                         </tr>
                                     </tfoot>
                                 </table>
