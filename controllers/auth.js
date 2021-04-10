@@ -340,7 +340,7 @@ exports.registerCustomer = async(req,res)=>{
             tokenPayload(req) )
             .then(function (response){
                 console.log(response.data);
-                return res.status(200).render('tenant_list',{layout: false,tenant: response.data})
+                return res.status(200).redirect('http://tarman.nonstopplc.com:5001/tenant_list')
             })
             .catch(function (error){
                 console.log(error.response.data.message);
@@ -398,13 +398,13 @@ exports.registerRoom = async(req,res)=>{
             })
             .catch(function (error){
                 console.log(error);
-                return res.status(400).render('add-room',{layout: false,message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+                return res.status(400).render('add-room',{layout: false,message: "Room is Rented",finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
             })
         }
         })
         .catch(function(error){
             console.log(error);
-            return res.status(400).render('add-room',{layout: false,message: error.response.data.message,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+            return res.status(400).render('add-room',{layout: false,message: "Floor is Rented",finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
         });
     }
     

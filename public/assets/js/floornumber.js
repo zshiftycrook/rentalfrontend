@@ -1,4 +1,12 @@
 
+function Strict(){
+  
+  var x = document.getElementById("floor").value;
+  
+
+  document.getElementById("roomnumber").pattern = `[${x}]{1}[0-9]{2}`;
+
+}
 
 function readCookie(name) {
     var nameEQ = name + "=";

@@ -166,29 +166,30 @@
                                 {{/if}}
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Number</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="text" required name="roomnumber" onchange="gettotalprice()" autocomplete="off"></div>
+                                <div class="col-sm-6 input-column"><input class="form-control" type="text" title="Should Start With the Floor Number Example Forth Floor Should always start With 4" id="roomnumber" onchange="Strict()" required name="roomnumber"  autocomplete="off"></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Floor</label></div>
-                                <div class="col-sm-6 input-column"><select class="form-control" id="floor" name="floor">
+                                <div class="col-sm-6 input-column"><select class="form-control" id="floor" id="floor" onchange="Strict()" name="floor">
                                    
                                 </select></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Size</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="number" name="size" autocomplete="off"></div>
+                                <div class="col-sm-6 input-column"><input class="form-control" type="number" name="size" autocomplete="off"><label class="col-form-label">in Meter Square</label></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="dropdown-input-field">Status&nbsp;</label></div>
                                 <div class="col-sm-4 input-column">
                                     <div class="dropdown">
                                         <select name="Status" id="Status" class="btn btn-primary dropdown-toggle" ><button class="btn btn-primary dropdown-toggle">
-                                        <option value="Rented">Rented &nbsp;</option>
+                                        
                                         <option value="Maintenance">Maintainance</option>
                                         <option value="Available" selected>Available</option>
+                                        <option value="Occupied" >Occupied</option>
                                         </select>                                        
                                 </div>
-                            </div><button class="btn btn-light submit-button" type="submit">Submit Room</button></form>
+                            </div><button class="btn btn-light submit-button" onclick="Strict()" type="submit">Submit Room</button></form>
                     </div>
                 </div>
             </div>

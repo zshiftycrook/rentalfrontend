@@ -189,9 +189,10 @@
                                         <option value="Rented" >Rented &nbsp;</option>
                                         <option value="Maintenance">Maintainance</option>
                                         <option value="Available" >Available</option>
+                                        <option value="Occupied" >Occupied</option>
                                         </select>                                        
                                 </div>
-                            </div><button class="btn btn-light submit-button" name="id" id="id" value="{{room.id}}" type="submit">Submit Room</button></form>
+                            </div><button class="btn btn-light submit-button" name="id" id="id" value="{{room.id}}" onchange="Strict()" type="submit">Submit Room</button></form>
                             {{/if}}
                     </div>
 
