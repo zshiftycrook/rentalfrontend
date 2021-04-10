@@ -424,7 +424,7 @@ router.get('/edit-payment',auth,finance,asyncHandler(async (req,res)=>{
        // console.log(results.data.rental.room)
     var roomnumb = await getRoomNumber(results.data.rental.room,req)
     console.log (roomnumb)
-    res.render('edit-payment',{layout: false,room: roomnumb.data,id:req.query.id , finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+    res.render('edit-payment',{layout: false,serial:results.data.Serial,room: roomnumb.data,id:req.query.id , finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
     })
     
 }))

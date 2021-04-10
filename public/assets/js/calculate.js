@@ -208,6 +208,7 @@ function getDays(addedmonth,ending){
   return daysDiff
 }
 
+
 function gettotalprice() {
   console.log(document.getElementById("room").value)
  $.ajax({
@@ -254,9 +255,10 @@ function gettotalprice() {
     }
 
     
-     document.getElementById("month").min=0;
+     document.getElementById("month").min=0;populate
      document.getElementById("total").value=document.getElementById("month").value*1.15*((result[0].price)+(result[0].parking*500));
      if (document.getElementById("month").value == ''){document.getElementById("total").value=result[0].price*1.15+(result[0].parking*500);}
+     if (document.getElementById("id").value != null){document.getElementById('serial').value=}
      document.getElementById("tenant").value=result[0].customer.name
      document.getElementById("")
      document.getElementById("lease").value=diffmonth +" Months "+daysDiff+" Days "

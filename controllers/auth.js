@@ -692,7 +692,7 @@ exports.editPayment= async (req,res)=>{
    
     if ( await finance(req,res) ){
         const {roomnumber,month,id,sdate,serial}=req.body;
-        //console.log(req.body);
+        console.log(req.body);
         
             axios.get('http://strapi.nonstopplc.com:1440/Rentals?_where[room.roomnumber]='+roomnumber,
             tokenPayload(req) )
@@ -750,7 +750,7 @@ exports.editRental= async (req,res)=>{
                         try {
                              axios.put('http://strapi.nonstopplc.com:1440/Rentals/'+id,
                                 {
-                                    pcost: results.data[0].parking*month*parkingcost*1.15,
+                                   
 
                                     parking:parking,
                                     customer: {
@@ -773,11 +773,13 @@ exports.editRental= async (req,res)=>{
                                     .redirect('http://tarman.nonstopplc.com:5001/rental_list');
                                 })
                                 .catch(function (error) {
-                                    console.log(error);
+
+                                   
                                     return res.status(400).render('edit-rental', {layout: false, message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user});
                                 });
                         }
                         catch (error) {
+                            console.log(error);
                             res.status(400).render('edit-rental', {layout: false, message: "The Tenant Was not found pls check again" ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user});
                         }
 
