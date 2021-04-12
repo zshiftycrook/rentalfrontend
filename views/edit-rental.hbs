@@ -161,14 +161,14 @@
             <div class="container">
                 <div class="row register-form">
                     <div class="col-md-8 col-xl-12 offset-md-2 offset-xl-0">
-                        <form class="custom-form" method="POST" action="/auth/editRental">
+                        <form class="custom-form" method="POST" action="/auth/editRental" >
                             <h1>Rental</h1>
                             {{#if rental}}
                           
                             <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Customer</label></div>
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field" >Customer</label></div>
                                 <div class="col-sm-6 input-column">
-                                <input value="{{rental.customer.name}}" id="cname" list="customer" name="cname" type="text" class="form-control" id="customer"  >
+                                <input value="{{rental.customer.name}}" id="cname" list="customer" name="cname" type="text" disabled class="form-control" id="customer"  >
                                 <datalist id="customer">
                                     
                                 </datalist>
@@ -178,33 +178,38 @@
                           
                             <div class="form-row form-group">
                                 <div  class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">starting&nbsp;</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" value="{{rental.starting}}"  type="date" name="sdate"></div>
+                                <div class="col-sm-6 input-column"><input class="form-control" value="{{rental.starting}}"  type="date" name="sdate" disabled></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">ends</label></div>
-                                <div class="col-sm-6 input-column"><input value="{{rental.ends}}"  class="form-control" type="date" name="edate"></div>
+                                <div class="col-sm-6 input-column"><input value="{{rental.ends}}"  class="form-control" type="date" name="edate" disabled></div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">RoomNumber</label></div>
                                   <div class="col-sm-6 input-column">
-                                <input id="rnumber" list="roomnumber" value="{{rental.room.roomnumber}}"  name="roomnumber" type="text" class="form-control" >
+                                <input id="rnumber" list="roomnumber" disabled value="{{rental.room.roomnumber}}"  name="roomnumber" type="text" class="form-control" >
                                 <datalist id="roomnumber">
                                     
                                 </datalist>
                                 </div>
                             </div>
                              <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Parking</label></div>
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field" >Parking</label></div>
                                   <div class="col-sm-6 input-column">
-                                <input  list="parking" value={{rental.parking}} name="parking" min="0" type="number" class="form-control" autocomplete="off">
+                                <input  list="parking" value={{rental.parking}} disabled name="parking" min="0" type="number" class="form-control" autocomplete="off">
                                 
                                 </div>
                             </div>
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Total Amount Per Month </label></div>
-                                <div class="col-sm-6 input-column"><input value="{{rental.price}}"  class="form-control" min="5000" type="number" name="price"></div>
+                                <div class="col-sm-6 input-column"><input value="{{rental.price}}"  class="form-control" disabled min="5000" type="number" name="price"></div>
                             </div>
-                            
+                                   </div>
+                                <div class="form-row form-group">
+                                                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">ID</label><label class="col-form-label" style="color: red;">*Required</label></div>
+
+                                  <div class="col-sm-6 input-column"> <input type="file" class="form-control" id="identification"  accept="image/*" name="myprofile"></div>
+                            </div>
                             <button name="id" id="id" value="{{rental.id}}" class="btn btn-light submit-button" type="submit">Submit Rental&nbsp;</button></form>
                             {{/if}}
                     </div>

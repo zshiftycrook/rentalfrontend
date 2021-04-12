@@ -190,8 +190,10 @@
                                         <th>Room Number</th>
                                         <th>Size</th>
                                         <th>Price</th>
-                                        <th>Edit</th>
+                                        <th>View</th>
+                                        {{#if manager}}
                                         <th>Terminate</th>
+                                        {{/if}}
 
 
                                     </tr>
@@ -208,7 +210,7 @@
                                       <td>{{this.price}}</td>
                                       <td>
                                                     <form action="/edit-rental" method="GET"> 
-                                                        <button type="submit" name="id" id="id" value="{{this.id}}" class="btn btn-primary" >Edit</button>
+                                                        <button type="submit" name="id" id="id" value="{{this.id}}" class="btn btn-primary" >View</button>
                                                     </form>
                                      </td>   
                                      <td>
@@ -234,7 +236,7 @@
                                         <th>Room Number</th>
                                         <th>Size</th>
                                         <th>Price</th>
-                                        <th>Edit</th>
+                                        <th>View</th>
                                         <th>Terminate</th>
                                         
                                         </tr>

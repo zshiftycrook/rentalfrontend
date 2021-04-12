@@ -161,10 +161,10 @@
             <div class="container">
                 <div class="row register-form">
                     <div class="col-md-8 col-xl-12 offset-md-2 offset-xl-0">
-                        <form class="custom-form" method="POST" action="/auth/registerRental">
+                        <form class="custom-form" method="POST" action="/auth/registerRental"  >
                             <h1>Rental</h1>
                             <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Customer</label></div>
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Customer</label><label class="col-form-label" style="color: red;">*Required</label></div>
                                 <div class="col-sm-6 input-column">
                                 <input id="cname" list="customer" name="cname" type="text" class="form-control" id="customer" autocomplete="off">
                                 <datalist id="customer">
@@ -174,15 +174,15 @@
                                 </div>
                             </div>
                       <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">starting&nbsp;</label></div>
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Starting Date&nbsp;</label><label class="col-form-label" style="color: red;">*Required</label></div>
                                 <div class="col-sm-6 input-column"><input class="form-control" type="date" name="sdate"></div>
                             </div>
                             <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">ends</label></div>
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Terminating Date</label><label class="col-form-label" style="color: red;">*Required</label></div>
                                 <div class="col-sm-6 input-column"><input class="form-control" type="date" name="edate"></div>
                             </div>
                             <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">RoomNumber</label></div>
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">RoomNumber</label><label class="col-form-label" style="color: red;">*Required</label></div>
                                   <div class="col-sm-6 input-column">
                                 <input id="rnumber" list="roomnumber" name="roomnumber" type="text" class="form-control" autocomplete="off" min="0">
                                 <datalist id="roomnumber">
@@ -193,16 +193,15 @@
                               <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Parking</label></div>
                                   <div class="col-sm-6 input-column">
-                                <input  list="parking" name="parking" type="number" class="form-control" min="0" autocomplete="off">
+                                <input  list="parking" name="parking" type="number" class="form-control" min="0" value="0" autocomplete="off">
                               
                                 </div>
                             </div>
                             
                             <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Total Amount Per Month </label></div>
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Total Amount Per Month </label><label class="col-form-label" style="color: red;">*Required</label></div>
                                 <div class="col-sm-6 input-column"><input class="form-control" min="5000" type="number" name="price"></div>
-                            </div>
-                            
+                     
                             <button class="btn btn-light submit-button" type="submit">Submit Rental&nbsp;</button></form>
                             
                     </div>

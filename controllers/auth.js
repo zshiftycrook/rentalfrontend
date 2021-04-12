@@ -158,9 +158,40 @@ exports.refund =async(req,res)=>{
         })
 
 }
+// upload file
+async function  uploadfile(req,file,id){
+    if(file == undefined)
+    {
+        return res.redirect(req.get('referer'));
+    }
+    else {
+        let out = await rp({
+            method: 'POST',
+            uri: 'http://strapi.nonstopplc.com:1440/upload',
+            formData: {
+                // Like <input type="text" name="ref">
+                'ref': "rental",  // name of the Strapi data type, singular
+                'field': "ID", // a field named "attachments" of type "Media"
+                'refId': id, // strapi ID of object to attach to
+                // Like <input type="file" name="files">
+              //  "source": "users-permissions",
+                "files": {  // must be called "files" to be "seen" by Strapi Upload module
+                    name: file.filename+".pdf",
+                    value: fs.createReadStream(file.path),
+                    options: {
+                        filename: req.cookies.id+req.file.originalname,
 
+                        contentType:  'multipart/form-data'
+                    },
+                },
+            },
+            headers: {Authorization: `Bearer ${req.cookies.jwt}`}  // put your JWT code here
+        });
+    }
+}
 // upload pic 
 exports.upload = async(req,res)=>{
+
         if(req.file == undefined){
             return res
             .cookie('image',req.cookies.image)
@@ -419,6 +450,8 @@ exports.registerRental = async(req,res)=>{
     var htmlFinanace = await isFinanace(req);
     var htmlManager = await isManager(req);
     var htmlMarketer = await isMarketer(req);
+
+    console.log(req);
     if ( await marketer(req,res) ){
         const {cname,uid,sdate,edate,price,roomnumber,parking}=req.body;
         console.log(req.body)
@@ -450,7 +483,8 @@ exports.registerRental = async(req,res)=>{
                                 },
                                 tokenPayload(req))
                                 .then(function (response) {
-                                    console.log(response);
+                                    console.log(req);
+                                    //uploadfile(req,req.file,response.data.id)
                                     return res.cookie('jwt',req.cookies.jwt)
                                     .redirect('http://tarman.nonstopplc.com:5001/rental_list');
                                 })
@@ -472,7 +506,7 @@ exports.registerRental = async(req,res)=>{
         })
         .catch(function(error){
             console.log(error);
-            return results.status(400).render('add-rental',{layout: false,message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+            return res.status(400).render('add-rental',{layout: false,message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
         })   
     }
 }
