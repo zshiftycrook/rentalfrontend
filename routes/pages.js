@@ -156,8 +156,50 @@ function Rental(req){
     return axios.get('http://strapi.nonstopplc.com:1440/Rentals',
     tokenPayload(req))
 }
+function Parkings(req){
+    return axios.get('http://strapi.nonstopplc.com:1440/Parkings',
+    tokenPayload(req))
+}
 function getRoomNumber(data,req){
     return axios.get('http://strapi.nonstopplc.com:1440/Rooms/'+data,tokenPayload(req))
+}
+function listparking(rental,parking){
+    var i
+    var j
+    var display ={}
+    var name = 'data'
+    var flag =false
+   display[name] = [];
+    for (i=0;parking.data[i] != undefined; i++){
+        for (j=0;rental.data[j] != undefined; j++){
+            flag = false
+            controller = new Date();
+            
+            if(new Date(parking.data[i].ends) > controller)
+            {   
+                if(parking.data[i].Valid == true)
+                {
+                   // console.log(flag) 
+                    flag=true
+                }
+            }
+            console.log(parking.data[i])
+            if(parking.data[i].rental.id==rental.data[j].id)
+            {
+                    var data ={
+                        id : parking.data[i].id,
+                        cname : rental.data[j].customer.name,
+                        roomnumber : rental.data[j].room.roomnumber,
+                        paid : parking.data[i].cost,
+                        refundable : flag
+                    };
+                    
+                    display[name].push(data)
+            }
+        }
+    }
+    return display[name];
+ //   console.log(data)
 }
 function listPayment(rental,payment){
     var i
@@ -258,9 +300,21 @@ router.get('/index',auth,asyncHandler(async (req,res)=>{
     
     res.render('index',{tableList1: notRentedlist.data, tableList2: rentedList.data,layout: false,Totaltenants: Totaltenants.data.length,RoomTotal: Total.data.length,Maintaince: Maintaince.data.length ,Vacant: Vacant.data.length ,Rented: Rented.data.length ,Occupancy:Occupancy,earnings: Totalpayment ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager ,image:req.cookies.image,user:req.cookies.user})
 }))
-router.get('/forgot-password',auth,(req,res)=>{
+router.get('/forgot-password',reqauth,(req,res)=>{
     res.render('forgot-password');
 })
+router.get('/add-parking',auth,finance,(req,res)=>{
+    var htmlFinanace =  isFinanace(req);
+    var htmlManager =  isManager(req);
+    var htmlMarketer =  isMarketer(req);
+    axios.get('http://strapi.nonstopplc.com:1440/Users/'+req.cookies.id,
+    tokenPayload(req) )
+    .then(function(results){
+        console.log(results)
+    res.render('add-parking',{layout:false,finance: htmlFinanace,image:req.cookies.image,user: results.data.firstname})
+    })
+})
+
 router.get('/add-rental',auth,marketer,(req,res)=>{
     var htmlFinanace =  isFinanace(req);
     var htmlManager =  isManager(req);
@@ -285,7 +339,7 @@ router.get('/reciept',auth,finance,(req,res)=>{
     var vat =Math.round(results.data.price-(rental.data.price* month))
     var subtotal =Math.round(rental.data.price* month,vat);
     //console.log (rental.data)
-    res.render('reciept',{layout: false,month,rentalData:rental.data,payment:results.data,subtotal: subtotal , vat, finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+    res.render('reciept',{layout: false,month,rentalData:rental.data,payment:results.data,subtotal: subtotal, vat, finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
     })
   //  res.render('refund',{layout:false})
 })
@@ -293,13 +347,13 @@ router.get('/parkingreciept',auth,finance,(req,res)=>{
     var htmlFinanace =  isFinanace(req);
     var htmlManager =  isManager(req);
     var htmlMarketer =  isMarketer(req);
-    axios.get('http://strapi.nonstopplc.com:1440/Payments/'+req.query.id,
+    axios.get('http://strapi.nonstopplc.com:1440/Parkings/'+req.query.id,
     tokenPayload(req) )
     .then(async function(results){
        // console.log(results.data.rental.room)
     var rental = await getRental(results.data.rental.id,req)
-    var month = Math.round(results.data.price/(rental.data.price*1.15))
-    var subtotal =Math.round(rental.data.parking*500* month);
+    // var month = Math.round(results.data.cost/(500*results.data.))
+    //  var subtotal =Math.round(results.data.cost*month*);
     var vat =Math.round(subtotal*.15)
     
     //console.log (rental.data)
@@ -337,6 +391,20 @@ router.get('/add-payment',auth,finance,(req,res)=>{
     res.render('add-payment',{layout: false,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user: results.username})
     })
 })
+
+
+router.get('/parking_list',auth,asyncHandler(async (req,res)=>{
+    rental = await Rental(req)
+    parking = await Parkings(req)
+    list = listparking(rental, parking)
+    //console.log(listPayment(rental,payment))
+    var htmlFinanace =  isFinanace(req);
+    var htmlManager =  isManager(req);
+    var htmlMarketer =  isMarketer(req);
+    
+    res.render('parking_list',{layout: false,test : list,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+    }))
+
 
 router.get('/payment_list',auth,asyncHandler(async (req,res)=>{
 rental = await Rental(req)

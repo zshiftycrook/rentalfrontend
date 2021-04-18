@@ -30,6 +30,37 @@ async function getRental(id,req){
     return axios.get('http://strapi.nonstopplc.com:1440/Rentals/'+id,
     tokenPayload(req))
 }
+// for parking payment
+async function ppaidunitil(req,rid){
+    var lastpayed = null ;
+    
+    await axios.get('http://strapi.nonstopplc.com:1440/Parkingpayments?_where[rental.id]='+rid,
+     tokenPayload(req))
+    .then(async function(results){
+        if(results.data == ''){
+            var j= await getRental(rid,req)
+            lastpayed = j.data.starting
+        }
+        else{
+            for (var i=0;results.data[i] != undefined; i++){
+                if(lastpayed == null){
+                   lastpayed = results.data[i].ends
+                   
+                }
+                else if(lastpayed<results.data[i].ends){
+                    lastpayed = results.data[i].ends
+                    
+                }
+                
+            }
+        }
+       
+      //  console.log(lastpayed)
+        
+    })
+
+    return (lastpayed);
+}
 
 async function paidunitil(req,rid){
     var lastpayed = null ;
@@ -139,6 +170,24 @@ function isFinanace(req){
         return false;
     }
 }
+exports.refundparking =async(req,res)=>{
+    const {id}=req.body;
+    axios.put('http://strapi.nonstopplc.com:1440/Parkings/'+id,
+    {
+    Valid: false
+        },
+        tokenPayload(req) )
+        .then(function (response){
+            console.log("response");
+            return res.cookie('jwt',req.cookies.jwt)
+            .redirect('http://tarman.nonstopplc.com:5001/parking_list' )
+        })
+        .catch(function (error){
+            console.log(error);
+            return res.status(400).end()
+        })
+
+}
 //refund
 exports.refund =async(req,res)=>{
     const {id}=req.body;
@@ -187,6 +236,54 @@ async function  uploadfile(req,file,id){
             },
             headers: {Authorization: `Bearer ${req.cookies.jwt}`}  // put your JWT code here
         });
+    }
+}
+
+
+//register parking
+exports.registerParking = async(req,res)=>{
+    console.log("Here i am")
+    if ( await finance(req,res) ){
+    const {roomnumber,month,spot,cost}=req.body;
+   // console.log(req.body);
+    
+        axios.get('http://strapi.nonstopplc.com:1440/Rentals?_where[room.roomnumber]='+roomnumber+'&_where[passed] =false',
+        tokenPayload(req) )
+        .then(async function(results){
+            console.log(results.data)      
+            const start = new Date() 
+            var starting=new Date(start);          
+            const ending = await addMonths(start,month)           
+            axios.post('http://strapi.nonstopplc.com:1440/Parkings',
+            {
+            spot:spot,
+            starting: starting,
+            ends: ending,
+            cost: month*500*spot,
+            rental:{
+                id: results.data[0].id
+            },
+            room:{
+                id: roomnumber,
+            },
+          
+            },
+            tokenPayload(req) )
+            .then(function (response){
+               
+                return res.cookie('jwt',req.cookies.jwt)
+                .redirect('http://tarman.nonstopplc.com:5001/parking_list' )
+            })
+            .catch(function (error){
+                console.log(error);
+                return res.status(400).end()
+            })
+            
+        })
+        .catch(function(error){
+            console.log(error);
+            return res.status(400).end()
+        })
     }
 }
 // upload pic 
