@@ -14,11 +14,11 @@
 
 <body id="page-top" onload="populateRental()">
     <div id="wrapper">
-        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+      <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0">
                 <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="/index">
                     <div class="sidebar-brand-icon rotate-n-15"></div>
-                    <div class="sidebar-brand-text mx-3"><span><img src="/assets/img/logo.png"></i>&nbsp; TAR Systems</span></div>
+                    <div class="sidebar-brand-text mx-3"><span><img src="/assets/img/Edna_Mall/logo.png" width="40" height="20">&nbsp; TAR Systems</span></div>
                 </a>
                 <hr class="sidebar-divider my-0">
                    <ul class="nav navbar-nav text-light" id="accordionSidebar">
@@ -28,7 +28,10 @@
 
                     <li class="nav-item">{{#if marketer}}<a class="nav-link" href="/add-rental">Add Rental</a><a class="nav-link" href="/add-tenant">Add Tenant</a><a class="nav-link" href="/add-room">Add Room</a>{{/if}}{{#if finance}}<a class="nav-link" href="/add-payment">Add Payment</a>{{/if}}<a class="nav-link" href="/room_list">View Room list</a>
                         <a
-                            class="nav-link" href="/tenant_list">View Tenant List</a><a class="nav-link" href="/payment_list">View Payment List</a><a class="nav-link" href="/rental_list">View Rental List</a></li>
+                            class="nav-link" href="/tenant_list">View Tenant List</a><a class="nav-link" href="/payment_list">View Payment List</a><a class="nav-link" href="/rental_list">View Rental List</a>
+                            {{#if finance}}<a class="nav-link" href="/add-parking">Add Parking</a>{{/if}}
+                            {{#if finance}}<a class="nav-link" href="/parking_list">Parking List</a>{{/if}}
+                            </li>
                     <li class="nav-item"></li>
                     {{#if manager}}
                     <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-circle"></i><span>Register</span></a></li>
@@ -144,7 +147,7 @@
             </div>
             </nav>
             <div class="container-fluid">
-                <h3 class="text-dark mb-1">Add Rental</h3>
+               
                 {{#if message}}
                 <div class="alert">
                 <span class="closebtn">&times;</span>  
@@ -161,7 +164,7 @@
             <div class="container">
                 <div class="row register-form">
                     <div class="col-md-8 col-xl-12 offset-md-2 offset-xl-0">
-                        <form class="custom-form" method="POST" action="/auth/editRental" >
+                       
                             <h1>Rental</h1>
                             {{#if rental}}
                           
@@ -203,24 +206,68 @@
                             <div class="form-row form-group">
                                 <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Total Amount Per Month </label></div>
                                 <div class="col-sm-6 input-column"><input value="{{rental.price}}"  class="form-control" disabled min="5000" type="number" name="price"></div>
+                            </div> 
+                            <div  class="form-row form-group">
+                                                             <div class="col-sm-6 input-column"><img class="img-thumbnail" src="http://strapi.nonstopplc.com:1440{{rental.Identification.formats.thumbnail.url}}" width="160" height="160">
                             </div>
-                                   </div>
-                                <div class="form-row form-group">
-                                                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">ID</label><label class="col-form-label" style="color: red;">*Required</label></div>
+                        <form class="form-row form-group" method="POST" action="/auth/uploadfile" enctype="multipart/form-data" id="form">
+                            <div class="form-row form-group">
 
-                                  <div class="col-sm-6 input-column"> <input type="file" class="form-control" id="identification"  accept="image/*" name="myprofile"></div>
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Identifciation</label><label class="col-form-label" style="color: red;">*Required</label></div>
+                                  <div class="col-sm-6 input-column"> <input type="file" class="form-control" id="identification"  accept="image/*" name="identification"></div>
                             </div>
-                            <button name="id" id="id" value="{{rental.id}}" class="btn btn-light submit-button" type="submit">Submit Rental&nbsp;</button></form>
+                            <button name="id" id="id" value="{{rental.id}}" class="btn btn-light submit-button" type="submit">Submit Identifciation&nbsp;</button>
+                        </form>
+                        <div  class="form-row form-group">
+                                                             <div class="col-sm-6 input-column"><img class="img-thumbnail" src="http://strapi.nonstopplc.com:1440{{rental.Vat_Reg.formats.thumbnail.url}}" width="160" height="160">
+                            </div>
+                           <form class="form-row form-group" method="POST" action="/auth/uploadfile2" enctype="multipart/form-data" id="form">
+                            <div class="form-row form-group">
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Vat Registration</label><label class="col-form-label" style="color: red;">*Required</label></div>
+
+                                  <div class="col-sm-6 input-column"> <input type="file" class="form-control" id="vat"  accept="image/*" name="vat"></div>
+                            </div>
+                            <button name="id" id="id" value="{{rental.id}}" class="btn btn-light submit-button" type="submit">Submit Vat Registration&nbsp;</button>
+                        </form>
+                        <div  class="form-row form-group">
+                                                             <div class="col-sm-6 input-column"><img class="img-thumbnail" src="http://strapi.nonstopplc.com:1440{{rental.Licence.formats.thumbnail.url}}" width="160" height="160">
+                            </div>
+                           <form class="form-row form-group" method="POST" action="/auth/uploadfile3" enctype="multipart/form-data" id="form">
+                            <div class="form-row form-group">
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Licence</label><label class="col-form-label" style="color: red;">*Required</label></div>
+
+                                  <div class="col-sm-6 input-column"> <input type="file" class="form-control" id="licence"  accept="image/*" name="licence"></div>
+                            </div>
+                            <button name="id" id="id" value="{{rental.id}}" class="btn btn-light submit-button" type="submit">Submit Licence&nbsp;</button>
+                        </form>
+                        <div  class="form-row form-group">
+                                                             <div class="col-sm-6 input-column"><img class="img-thumbnail" src="http://strapi.nonstopplc.com:1440{{rental.Meted.formats.thumbnail.url}}" width="160" height="160">
+                            </div>
+                                            <form class="form-row form-group" method="POST" action="/auth/uploadfile4" enctype="multipart/form-data" id="form">
+                            <div class="form-row form-group">
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Meted</label><label class="col-form-label" style="color: red;">*Required</label></div>
+
+                                  <div class="col-sm-6 input-column"> <input type="file" class="form-control" id="meted"  accept="image/*" name="meted"></div>
+                            </div>
+                            <button name="id" id="id" value="{{rental.id}}" class="btn btn-light submit-button" type="submit">Submit Meted&nbsp;</button>
+                        </form>
+                        <div  class="form-row form-group">
+                                                             <div class="col-sm-6 input-column"><img class="img-thumbnail" src="http://strapi.nonstopplc.com:1440{{rental.Meme.formats.thumbnail.url}}" width="160" height="160">
+                            </div>
+                                            <form class="form-row form-group" method="POST" action="/auth/uploadfile5" enctype="multipart/form-data" id="form">
+                            <div class="form-row form-group">
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Mint</label><label class="col-form-label" style="color: red;">*Required</label></div>
+
+                                  <div class="col-sm-6 input-column"> <input type="file" class="form-control" id="mint"  accept="image/*" name="mint"></div>
+                            </div>
+                            <button name="id" id="id" value="{{rental.id}}" class="btn btn-light submit-button" type="submit">Submit Mint&nbsp;</button>
+                        </form>
                             {{/if}}
                     </div>
                 </div>
             </div>
         </div>
-        <footer class="bg-white sticky-footer">
-            <div class="container my-auto">
-                <div class="text-center my-auto copyright"><span>Copyright © TAR Systems V0.1&nbsp; &nbsp; &nbsp;2020</span></div>
-            </div>
-        </footer>
+       
     </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a></div>
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>

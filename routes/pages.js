@@ -511,9 +511,11 @@ router.get('/edit-rental',auth,marketer,(req,res)=>{
     var htmlFinanace =  isFinanace(req);
     var htmlManager =  isManager(req);
     var htmlMarketer =  isMarketer(req);
+    
     axios.get('http://strapi.nonstopplc.com:1440/Rentals/'+req.query.id,
     tokenPayload(req) )
     .then(function(results){
+        console.log(results.data.Meted)
     res.render('edit-rental',{layout: false,rental: results.data,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
     })
     

@@ -171,7 +171,8 @@ function isFinanace(req){
     }
 }
 exports.refundparking =async(req,res)=>{
-    const {id}=req.body;
+    //const {id}=req.body;
+    console.log(req.data)
     axios.put('http://strapi.nonstopplc.com:1440/Parkings/'+id,
     {
     Valid: false
@@ -208,7 +209,22 @@ exports.refund =async(req,res)=>{
 
 }
 // upload file
-async function  uploadfile(req,file,id){
+exports.uploadfile =async(req,res) =>{
+    //console.log(req.file.fieldname)
+    if(req.file.fieldname == "identification"){
+         uploadfiles(req,res,req.file,"Identification")}
+    else if(req.file.fieldname == "vat"){
+        uploadfiles(req,res,req.file,"Vat_Reg")}
+    else if(req.file.fieldname == "licence"){
+        uploadfiles(req,res,req.file,"Licence")}
+    else if(req.file.fieldname == "meted"){
+        uploadfiles(req,res,req.file,"Meted")}
+    else if(req.file.fieldname="meme"){
+        uploadfiles(req,res,req.file,"Meme")
+    }
+
+}
+async function  uploadfiles(req,res,file,field){
     if(file == undefined)
     {
         return res.redirect(req.get('referer'));
@@ -220,8 +236,8 @@ async function  uploadfile(req,file,id){
             formData: {
                 // Like <input type="text" name="ref">
                 'ref': "rental",  // name of the Strapi data type, singular
-                'field': "ID", // a field named "attachments" of type "Media"
-                'refId': id, // strapi ID of object to attach to
+                'field': field, // a field named "attachments" of type "Media"
+                'refId': req.body.id, // strapi ID of object to attach to
                 // Like <input type="file" name="files">
               //  "source": "users-permissions",
                 "files": {  // must be called "files" to be "seen" by Strapi Upload module
@@ -236,7 +252,10 @@ async function  uploadfile(req,file,id){
             },
             headers: {Authorization: `Bearer ${req.cookies.jwt}`}  // put your JWT code here
         });
+        return res.redirect(req.get('referer'));
     }
+
+    
 }
 
 
@@ -923,7 +942,7 @@ exports.editRental= async (req,res)=>{
         })
         .catch(function(error){
             console.log(error);
-            return results.status(400).render('edit-rental',{layout: false,message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
+            return res.status(400).render('edit-rental',{layout: false,message: error.response.data.message ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager,image:req.cookies.image,user:req.cookies.user})
         })   
     }
   
