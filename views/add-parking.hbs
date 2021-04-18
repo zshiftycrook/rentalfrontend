@@ -11,11 +11,10 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/Pretty-Registration-Form.css">
     <link rel="stylesheet" type="text/css" href="/assets/css/untitled.css">
 </head>
-</head>
 
-<body id="page-top" onload="generatefloor()">
+<body id="page-top" onload="populate()">
     <div id="wrapper">
-        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+       <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0">
                 <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="/index">
                     <div class="sidebar-brand-icon rotate-n-15"></div>
@@ -148,13 +147,13 @@
             </div>
             </nav>
             <div class="container-fluid">
-                <h3 class="text-dark mb-1">Add New Room</h3>
+                <h3 class="text-dark mb-1">Add Parking</h3>
             </div>
             <div class="container">
                 <div class="row register-form">
                     <div class="col-md-8 col-xl-12 offset-md-2 offset-xl-0">
-                        <form class="custom-form" method="POST" action="/auth/registerRoom">
-                            <h1>Room Register Form</h1>
+                        <form class="custom-form" method="POST" action="/auth/registerParking">
+                            <h1>Create Parking</h1>
                                {{#if message}}
                                 <div class="alert">
                                 <span class="closebtn">&times;</span>  
@@ -168,31 +167,44 @@
                                 </div>       
                                 {{/if}}
                             <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Number</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="text" title="Should Start With the Floor Number Example Forth Floor Should always start With 4" id="roomnumber" onchange="Strict()" required name="roomnumber"  autocomplete="off"></div>
-                            </div>
-                            <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Floor</label></div>
-                                <div class="col-sm-6 input-column"><select class="form-control" id="floor" id="floor" onchange="Strict()" name="floor">
-                                   
-                                </select></div>
-                            </div>
-                            <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Size</label></div>
-                                <div class="col-sm-6 input-column"><input class="form-control" type="number" name="size" autocomplete="off"><label class="col-form-label">in Meter Square</label></div>
-                            </div>
-                            <div class="form-row form-group">
-                                <div class="col-sm-4 label-column"><label class="col-form-label" for="dropdown-input-field">Status&nbsp;</label></div>
-                                <div class="col-sm-4 input-column">
-                                    <div class="dropdown">
-                                        <select name="Status" id="Status" class="btn btn-primary dropdown-toggle" ><button class="btn btn-primary dropdown-toggle">
-                                        
-                                        <option value="Maintenance">Maintainance</option>
-                                        <option value="Available" selected>Available</option>
-                                        <option value="Occupied" >Occupied</option>
-                                        </select>                                        
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Room Number</label><label class="col-form-label" style="color: red;">*Required</label></div>
+                                
+                                <div class="col-sm-6 input-column">
+                                <input id="room" list="roomnumber" name="roomnumber" type="text" class="form-control" id="room" onchange="gettotalprice()" autocomplete="off">
+                                <datalist id="roomnumber">
+                                    
+                                </datalist>
                                 </div>
-                            </div><button class="btn btn-light submit-button" onclick="Strict()" type="submit">Submit Room</button></form>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Tenant Name</label></div>
+                                <div class="col-sm-6 input-column"><input required id="tenant" class="form-control" type="text" name="name" disabled></div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Remaining lease Time&nbsp;</label></div>
+                                <div class="col-sm-6 input-column"><input id="lease"class="form-control" type="text" name="leasetime" disabled></div>
+                            </div>
+                             <div class="form-row form-group">
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Remaining paid Time&nbsp;</label></div>
+                                <div class="col-sm-6 input-column"><input id="paid"class="form-control" type="text" name="paid" disabled></div>
+                            </div>
+                             <div class="form-row form-group">
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Number of Parking Spot&nbsp;</label></div>
+                                <div class="col-sm-6 input-column"><input id="spot"class="form-control" type="number" name="spot" required></div>
+                            </div>
+                          
+                          
+                            <div class="form-row form-group">
+                                <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Number Of Month</label><label class="col-form-label" style="color: red;">*Required</label></div>
+                                <div class="col-sm-6 input-column"><input required id="month" class="form-control" type="number" name="month" id="month" onchange="gettotalprice()"></div>
+                            </div>
+                           
+                            
+                         
+                            
+                
+                            <button class="btn btn-light submit-button" type="submit">Create Parking&nbsp;</button></form>
+
                     </div>
                 </div>
             </div>
@@ -207,10 +219,10 @@
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="/assets/js/chart.min.js"></script>
     <script src="/assets/js/bs-init.js"></script>
-    <script src="/assets/js/calculate.js"></script>
+   
+    <script src="/assets/js/parking.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
     <script src="/assets/js/theme.js"></script>
-    <script src="/assets/js/floornumber.js"></script>
 </body>
 
 </html>

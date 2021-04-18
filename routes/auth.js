@@ -4,7 +4,8 @@ const authController =require('../controllers/auth')
 const router =express.Router();
 const multer = require('multer')
 const upload = multer ({dest:'./uploads/'});
-const asyncHandler =require('express-async-handler')
+const asyncHandler =require('express-async-handler');
+const { route } = require('./pages');
 
 
 
@@ -15,12 +16,15 @@ router.post('/register',authController.register)
 //router.post('/cusregister',authController.registerUser)
 router.post('/registerCustomer',authController.registerCustomer);
 router.post('/registerPayment',authController.registerPayment);
+//router.post('/registerParkingPayment',authController.registerParkingPayment)
+router.post('/registerParking',authController.registerParking)
 router.post('/registerRoom',authController.registerRoom)
 router.post('/upload',upload.single('myprofile'),authController.upload)
 router.post('/registerRental', authController.registerRental)
 router.post('/changePassword',authController.changepassword)
 router.post('/terminate-rental',authController.terminaterental)
 router.post('/refund',authController.refund);
+router.post('/refundparking',authController.refundparking)
 //List
 
 // //Delete

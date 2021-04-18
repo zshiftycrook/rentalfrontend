@@ -19,7 +19,7 @@
             <div class="container-fluid d-flex flex-column p-0">
                 <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="/index">
                     <div class="sidebar-brand-icon rotate-n-15"></div>
-                    <div class="sidebar-brand-text mx-3"><span><i class="fas fa-building" style="font-size: 35px;"></i>&nbsp; TAR Systems</span></div>
+                    <div class="sidebar-brand-text mx-3"><span><img src="/assets/img/Edna_Mall/logo.png" width="40" height="20">&nbsp; TAR Systems</span></div>
                 </a>
                 <hr class="sidebar-divider my-0">
                    <ul class="nav navbar-nav text-light" id="accordionSidebar">
@@ -29,7 +29,10 @@
 
                     <li class="nav-item">{{#if marketer}}<a class="nav-link" href="/add-rental">Add Rental</a><a class="nav-link" href="/add-tenant">Add Tenant</a><a class="nav-link" href="/add-room">Add Room</a>{{/if}}{{#if finance}}<a class="nav-link" href="/add-payment">Add Payment</a>{{/if}}<a class="nav-link" href="/room_list">View Room list</a>
                         <a
-                            class="nav-link" href="/tenant_list">View Tenant List</a><a class="nav-link" href="/payment_list">View Payment List</a><a class="nav-link" href="/rental_list">View Rental List</a></li>
+                            class="nav-link" href="/tenant_list">View Tenant List</a><a class="nav-link" href="/payment_list">View Payment List</a><a class="nav-link" href="/rental_list">View Rental List</a>
+                            {{#if finance}}<a class="nav-link" href="/add-parking">Add Parking</a>{{/if}}
+                            {{#if finance}}<a class="nav-link" href="/parking_list">Parking List</a>{{/if}}
+                            </li>
                     <li class="nav-item"></li>
                     {{#if manager}}
                     <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-circle"></i><span>Register</span></a></li>

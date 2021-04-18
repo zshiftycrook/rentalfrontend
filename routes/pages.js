@@ -300,7 +300,7 @@ router.get('/index',auth,asyncHandler(async (req,res)=>{
     
     res.render('index',{tableList1: notRentedlist.data, tableList2: rentedList.data,layout: false,Totaltenants: Totaltenants.data.length,RoomTotal: Total.data.length,Maintaince: Maintaince.data.length ,Vacant: Vacant.data.length ,Rented: Rented.data.length ,Occupancy:Occupancy,earnings: Totalpayment ,finance: htmlFinanace,marketer: htmlMarketer,manager: htmlManager ,image:req.cookies.image,user:req.cookies.user})
 }))
-router.get('/forgot-password',reqauth,(req,res)=>{
+router.get('/forgot-password',auth,(req,res)=>{
     res.render('forgot-password');
 })
 router.get('/add-parking',auth,finance,(req,res)=>{
