@@ -271,11 +271,17 @@
                                         disabled min="5000" type="number" name="price"></div>
                             </div>
                             <div class="form-row form-group">
+                                 {{#if rental.Identification.formats.thumbnail.url}}
                                 <a href="http://strapi.nonstopplc.com:1440{{rental.Identification.url}}">
                                     <div class="col-sm-6 input-column"><img class="img-thumbnail"
                                             src="http://strapi.nonstopplc.com:1440{{rental.Identification.formats.thumbnail.url}}"
                                             width="160" height="160">
                                 </a>
+                                {{else}}
+                                     <div class="col-sm-6 input-column"><img class="img-thumbnail"
+                                    src="/assets/img/nofile.png" 
+                                    width="160" height="160">
+                                    {{/if}}
                             </div>
                             <form class="form-row form-group" method="POST" action="/auth/uploadfile"
                                 enctype="multipart/form-data" id="form">
@@ -294,12 +300,18 @@
 
                         </form>
                         <div class="form-row form-group">
+                             {{#if rental.Vat_Reg.formats.thumbnail.url}}
                             <a href="http://strapi.nonstopplc.com:1440{{rental.Vat_Reg.url}}">
                                 <div class="col-sm-6 input-column"><img class="img-thumbnail"
                                         src="http://strapi.nonstopplc.com:1440{{rental.Vat_Reg.formats.thumbnail.url}}"
                                         width="160" height="160">
 
                             </a>
+                             {{else}}
+                                     <div class="col-sm-6 input-column"><img class="img-thumbnail"
+                                    src="/assets/img/nofile.png" 
+                                    width="160" height="160">
+                                    {{/if}}
                         </div>
                         <form class="form-row form-group" method="POST" action="/auth/uploadfile2"
                             enctype="multipart/form-data" id="form">
@@ -316,12 +328,25 @@
                     </div>
                     </form>
                     <div class="form-row form-group">
+                        {{#if rental.Licence.formats.thumbnail.url}}
                         <a href="http://strapi.nonstopplc.com:1440{{rental.Licence.url}}">
-                            <div class="col-sm-6 input-column"><img class="img-thumbnail"
-                                    src="http://strapi.nonstopplc.com:1440{{rental.Licence.formats.thumbnail.url}}"
-                                    width="160" height="160">
 
-                        </a>
+                            <div class="col-sm-6 input-column"><img class="img-thumbnail"
+                                    src="http://strapi.nonstopplc.com:1440{{rental.Licence.formats.thumbnail.url}}" 
+                                    width="160" height="160">
+                                     </a>
+                                    {{else}}
+                                     <div class="col-sm-6 input-column"><img class="img-thumbnail"
+                                    src="/assets/img/nofile.png" 
+                                    width="160" height="160">
+                                    {{/if}}
+                        
+
+                       
+                      
+
+                        
+                        
                     </div>
                     <form class="form-row form-group" method="POST" action="/auth/uploadfile3"
                         enctype="multipart/form-data" id="form">
@@ -338,12 +363,18 @@
                                 &nbsp;</button></div>
                     </form>
                     <div class="form-row form-group">
+                         {{#if rental.Meted.formats.thumbnail.url}}
                         <a href="http://strapi.nonstopplc.com:1440{{rental.Meted.url}}">
                             <div class="col-sm-6 input-column"><img class="img-thumbnail"
                                     src="http://strapi.nonstopplc.com:1440{{rental.Meted.formats.thumbnail.url}}"
                                     width="160" height="160">
 
                         </a>
+                         {{else}}
+                                     <div class="col-sm-6 input-column"><img class="img-thumbnail"
+                                    src="/assets/img/nofile.png" 
+                                    width="160" height="160">
+                                    {{/if}}
                     </div>
                     <form class="form-row form-group" method="POST" action="/auth/uploadfile4"
                         enctype="multipart/form-data" id="form">
@@ -360,12 +391,18 @@
                                 Meted&nbsp;</button></div>
                     </form>
                     <div class="form-row form-group">
+                         {{#if rental.Meme.formats.thumbnail.url}}
                         <a href="http://strapi.nonstopplc.com:1440{{rental.Meme.url}}">
                             <div class="col-sm-6 input-column"><img class="img-thumbnail"
                                     src="http://strapi.nonstopplc.com:1440{{rental.Meme.formats.thumbnail.url}}"
                                     width="160" height="160">
 
                         </a>
+                         {{else}}
+                                     <div class="col-sm-6 input-column"><img class="img-thumbnail"
+                                    src="/assets/img/nofile.png" 
+                                    width="160" height="160">
+                                    {{/if}}
                     </div>
                     <form class="form-row form-group" method="POST" action="/auth/uploadfile5"
                         enctype="multipart/form-data" id="form">

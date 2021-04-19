@@ -193,6 +193,7 @@
                                         <th>Room Number</th>
                                         <th>Size</th>
                                         <th>Price</th>
+                                        <th>Date</th>
                                         <th>View</th>
                                         {{#if manager}}
                                         <th>Terminate</th>
@@ -211,6 +212,8 @@
                                       <td>{{this.room.roomnumber}}</td>
                                       <td>{{this.room.size}}</td>
                                       <td>{{this.price}}</td>
+                                      <td>{{this.published_at}}</td>
+                                      
                                       <td>
                                                     <form action="/edit-rental" method="GET"> 
                                                         <button type="submit" name="id" id="id" value="{{this.id}}" class="btn btn-primary" >View</button>
@@ -239,6 +242,7 @@
                                         <th>Room Number</th>
                                         <th>Size</th>
                                         <th>Price</th>
+                                        <th>Date</th>
                                         <th>View</th>
                                         <th>Terminate</th>
                                         

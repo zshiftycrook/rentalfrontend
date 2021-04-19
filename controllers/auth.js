@@ -171,7 +171,7 @@ function isFinanace(req){
     }
 }
 exports.refundparking =async(req,res)=>{
-    //const {id}=req.body;
+const {id}=req.body;
     console.log(req.data)
     axios.put('http://strapi.nonstopplc.com:1440/Parkings/'+id,
     {
@@ -418,7 +418,7 @@ exports.login = async (req,res)=>{
             .catch(function (error){
                 console.log(error);
                 
-                return res.status(400).render('login',{message: error.response.data.message,image:req.cookies.image,user:req.cookies.user})
+                return res.status(400).render('login',{layout: false,message: "Incorrect Username or Password",image:req.cookies.image,user:req.cookies.user})
             })
         }
     }catch (error) {
