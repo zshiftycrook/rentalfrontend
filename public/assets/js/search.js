@@ -16,3 +16,28 @@ function myFunction() {
       }       
     }
   }
+  function GetFormattedDate() {
+    var todayTime = Document.get
+    var month = format(todayTime .getMonth() + 1);
+    var day = format(todayTime .getDate());
+    var year = format(todayTime .getFullYear());
+    console.log()
+    return month + "/" + day + "/" + year;
+
+}
+function showTableData() { 
+  document.getElementById('info').innerHTML = ""; 
+  var myTab = document.getElementById('empTable'); 
+  var opt = document.getElementById("opt").value; 
+  var index = document.getElementById(opt).cellIndex; 
+  
+  for (i = 1; i < myTab.rows.length; i++) { 
+      var objCells = myTab.rows.item(i).cells; 
+      
+      for (var j = index; j <= index; j++) { 
+          info.innerHTML = info.innerHTML + ' ' + objCells.item(j).innerHTML; 
+      } 
+      
+      info.innerHTML = info.innerHTML + '<br />'; 
+  } 
+}
